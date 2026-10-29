@@ -115,6 +115,8 @@ except ImportError:
             server.serve_forever()
 
 app = Flask(__name__)
+if hasattr(app, "config"):
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 PRIMARY_STATE_PATH = Path.home() / ".offduty_state.json"
