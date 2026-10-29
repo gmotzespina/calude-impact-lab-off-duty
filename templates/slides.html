@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Off-Duty — 5-Slide User Journey Pitch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#EDEAE2',
+            surface: '#F9F7F2',
+            surfacealt: '#F1EFE9',
+            charcoal: '#191918',
+            inkmuted: '#57554F',
+            borderwarm: '#DFDCD3',
+            terracotta: '#D46A43',
+            terracottadark: '#B8532E',
+            periwinkle: '#7C72B8',
+            sage: '#578E7E',
+            sagedark: '#427062',
+            amberwarm: '#C88A2B'
+          },
+          fontFamily: {
+            display: ['"Newsreader"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"SF Mono"', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #EDEAE2;
+      color: #191918;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+    .card-surface {
+      background-color: #F9F7F2;
+      border: 1px solid #DFDCD3;
+      box-shadow: 0 4px 20px rgba(25, 25, 24, 0.04);
+    }
+    .metric-number {
+      font-family: 'Newsreader', Georgia, serif;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    /* Directional View Transitions (Modern Web Guidance Baseline Pattern) */
+    @keyframes slide-to-left {
+      to { transform: translateX(-4%); opacity: 0; }
+    }
+    @keyframes slide-from-right {
+      from { transform: translateX(4%); opacity: 0; }
+    }
+    @keyframes slide-to-right {
+      to { transform: translateX(4%); opacity: 0; }
+    }
+    @keyframes slide-from-left {
+      from { transform: translateX(-4%); opacity: 0; }
+    }
+
+    ::view-transition-group(root) {
+      animation: 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    html:active-view-transition-type(forward)::view-transition-old(root) {
+      animation-name: slide-to-left;
+    }
+    html:active-view-transition-type(forward)::view-transition-new(root) {
+      animation-name: slide-from-right;
+    }
+    html:active-view-transition-type(backward)::view-transition-old(root) {
+      animation-name: slide-to-right;
+    }
+    html:active-view-transition-type(backward)::view-transition-new(root) {
+      animation-name: slide-from-left;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(root) {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between font-sans selection:bg-terracotta/20 selection:text-charcoal overflow-x-hidden">
+
+  <!-- ===================================================================== -->
+  <!-- TOP BAR: BRAND + 5-STEP USER JOURNEY TIMELINE + LIVE APP LINK          -->
+  <!-- ===================================================================== -->
+  <header data-no-stage-nav class="w-full border-b border-borderwarm bg-surface/90 backdrop-blur-sm z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+
+      <!-- Brand & Pitch Badge -->
+      <div class="flex items-center gap-3">
+        <a href="/" class="font-display text-xl sm:text-2xl font-normal tracking-tight text-charcoal hover:text-terracotta transition">
+          Off-Duty
+        </a>
+        <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-charcoal text-[#F9F7F2]">
+          User Journey Pitch
+        </span>
+      </div>
+
+      <!-- 5-Step Journey Stepper -->
+      <nav aria-label="Slide navigation" class="flex items-center gap-1.5 sm:gap-2">
+        <button type="button" onclick="goToSlide(1)" id="step-btn-1"
+          class="step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5">
+          <span class="font-bold">1</span>
+          <span class="hidden md:inline">The Trap</span>
+        </button>
+        <span class="text-borderwarm text-xs">→</span>
+        <button type="button" onclick="goToSlide(2)" id="step-btn-2"
+          class="step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5">
+          <span class="font-bold">2</span>
+          <span class="hidden md:inline">Live Telemetry</span>
+        </button>
+        <span class="text-borderwarm text-xs">→</span>
+        <button type="button" onclick="goToSlide(3)" id="step-btn-3"
+          class="step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5">
+          <span class="font-bold">3</span>
+          <span class="hidden md:inline">5m Bio-Reset</span>
+        </button>
+        <span class="text-borderwarm text-xs">→</span>
+        <button type="button" onclick="goToSlide(4)" id="step-btn-4"
+          class="step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5">
+          <span class="font-bold">4</span>
+          <span class="hidden md:inline">8 PM Shutdown</span>
+        </button>
+        <span class="text-borderwarm text-xs">→</span>
+        <button type="button" onclick="goToSlide(5)" id="step-btn-5"
+          class="step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5">
+          <span class="font-bold">5</span>
+          <span class="hidden md:inline">9 AM Unpack</span>
+        </button>
+      </nav>
+
+      <!-- Link back to Live App -->
+      <div class="flex items-center gap-2">
+        <a href="/" class="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-surfacealt hover:bg-canvas border border-borderwarm text-charcoal transition flex items-center gap-1.5">
+          <span>⚡ Open Live App</span>
+          <span>↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Thin Progress Bar -->
+    <div class="w-full h-1 bg-borderwarm/60">
+      <div id="slide-progress-bar" class="h-full bg-terracotta transition-all duration-300" style="width: 20%;"></div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN SLIDE STAGE (CLICK LEFT OR RIGHT TO NAVIGATE)                    -->
+  <!-- ===================================================================== -->
+  <main id="slide-stage" class="relative flex-1 flex items-center justify-center px-4 sm:px-16 py-6 sm:py-10 cursor-pointer"
+    title="Click right side for Next slide, left side for Previous slide">
+
+    <!-- Left Floating Click Paddle -->
+    <button type="button" id="left-paddle" data-no-stage-nav onclick="prevSlide()" aria-label="Previous slide"
+      class="fixed left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full card-surface hover:bg-charcoal hover:text-white text-charcoal flex items-center justify-center shadow-md transition active:scale-95 disabled:opacity-25 disabled:pointer-events-none">
+      <span class="text-lg font-mono">←</span>
+    </button>
+
+    <!-- Right Floating Click Paddle -->
+    <button type="button" id="right-paddle" data-no-stage-nav onclick="nextSlide()" aria-label="Next slide"
+      class="fixed right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full card-surface hover:bg-terracotta hover:text-white text-charcoal flex items-center justify-center shadow-md transition active:scale-95 disabled:opacity-25 disabled:pointer-events-none">
+      <span class="text-lg font-mono">→</span>
+    </button>
+
+    <!-- SLIDES CONTAINER -->
+    <div class="w-full max-w-5xl mx-auto">
+
+      <!-- ================================================================= -->
+      <!-- SLIDE 1 (#1): THE PROBLEM — AI COMPRESSION BURNOUT                -->
+      <!-- ================================================================= -->
+      <section id="slide-1" class="slide-panel space-y-6">
+        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-terracotta space-y-8">
+
+          <!-- Journey Timestamp & Pill -->
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracottadark font-mono text-xs font-semibold uppercase tracking-wider">
+                Slide 01 / 05 • User Journey: 07:45 PM
+              </span>
+              <span class="text-xs font-mono text-inkmuted">Act I — The AI Compression Trap</span>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded bg-surfacealt border border-borderwarm text-charcoal">
+              The One Rule: “Give people time back, not help them do more.”
+            </span>
+          </div>
+
+          <!-- Hero Pitch Headline -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+                AI killed natural pauses. Now <span class="text-terracotta font-normal">open code loops</span> keep engineers wired past 8 PM.
+              </h1>
+              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+                Meet <strong class="text-charcoal">Alex</strong>. It’s 7:45 PM. Instead of waiting for builds, Alex is juggling <strong class="text-charcoal">4 Git repos</strong> and <strong class="text-charcoal">3 Claude agents</strong> in parallel. Traditional screen blockers fail because locking a screen while 14 uncommitted files sit in working memory triggers anxiety—not rest.
+              </p>
+
+              <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
+                  <div class="font-mono text-[11px] uppercase text-terracottadark font-semibold mb-1">✗ Why Screen Timers Fail</div>
+                  <p class="text-inkmuted">They only track hours and nag you to stop—leaving half-written diffs spinning in your head all night.</p>
+                </div>
+                <div class="bg-sage/10 border border-sage/30 rounded-2xl p-4">
+                  <div class="font-mono text-[11px] uppercase text-sagedark font-semibold mb-1">✓ The Off-Duty Insight</div>
+                  <p class="text-charcoal">To close your laptop guilt-free, you have to <strong>park the mental state</strong> to disk first.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Journey Card: What Alex's Mac Looks Like at 7:45 PM -->
+            <div class="lg:col-span-5 bg-[#191918] text-[#F9F7F2] rounded-2xl p-6 space-y-5 border border-[#35332E]">
+              <div class="flex items-center justify-between border-b border-[#35332E] pb-3">
+                <span class="text-xs font-mono uppercase tracking-wider text-[#F28C68] flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-terracotta animate-pulse"></span>
+                  Alex’s Brain at 07:45 PM
+                </span>
+                <span class="text-[11px] font-mono text-[#A8A296]">HIGH BURNOUT RISK</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3.5">
+                  <div id="s1-live-repos" class="metric-number text-4xl text-[#F28C68]">4</div>
+                  <div class="text-xs font-mono text-[#A8A296] mt-1">Parallel Git Repos</div>
+                </div>
+                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3.5">
+                  <div id="s1-live-loops" class="metric-number text-4xl text-periwinkle">14</div>
+                  <div class="text-xs font-mono text-[#A8A296] mt-1">Uncommitted Diffs</div>
+                </div>
+              </div>
+
+              <div class="space-y-2 text-xs font-mono text-[#D5D0C5]">
+                <div class="flex justify-between py-1.5 border-b border-[#35332E]">
+                  <span>Continuous active streak:</span>
+                  <strong class="text-[#F28C68]">94m straight (0 breaks)</strong>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-[#35332E]">
+                  <span>Post-8:00 PM nights (7d):</span>
+                  <strong class="text-[#F28C68]">4 nights flagged</strong>
+                </div>
+                <div class="flex justify-between py-1.5">
+                  <span>Background Claude PIDs:</span>
+                  <strong class="text-white">Spinning in terminal</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SLIDE 2 (#2): LIVE TELEMETRY & OPEN LOOPS (OFFICIAL IDEA #1)      -->
+      <!-- ================================================================= -->
+      <section id="slide-2" class="slide-panel hidden space-y-6">
+        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-periwinkle space-y-8">
+
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full bg-periwinkle/15 text-periwinkle font-mono text-xs font-semibold uppercase tracking-wider">
+                Slide 02 / 05 • User Journey: 03:15 PM
+              </span>
+              <span class="text-xs font-mono text-inkmuted">Act II — Official Idea #1: Live Workload &amp; Loop Scanner</span>
+            </div>
+            <span id="s2-latency-pill" class="text-xs font-mono px-2.5 py-1 rounded bg-surfacealt border border-borderwarm text-charcoal">
+              100% Real macOS Telemetry • Zero Prompts
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-6 space-y-4">
+              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+                Zero journals. Off-Duty reads your <span class="text-periwinkle font-normal">real Mac &amp; Git state</span> automatically.
+              </h1>
+              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+                Alex opens <code class="font-mono text-xs bg-surfacealt px-1.5 py-0.5 rounded">http://127.0.0.1:5050</code>. Without typing a single word, Off-Duty scans the host Mac in milliseconds and surfaces every open code loop holding Alex’s working memory hostage.
+              </p>
+
+              <ul class="space-y-3 text-xs sm:text-sm text-charcoal pt-1">
+                <li class="flex items-start gap-2.5">
+                  <span class="text-periwinkle font-bold mt-0.5">01</span>
+                  <span><strong>Hardware Idle Timer (<code class="font-mono text-xs">ioreg -c IOHIDSystem</code>):</strong> Tracks continuous active work streak; resets only after 5+ mins away from keyboard/mouse.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="text-periwinkle font-bold mt-0.5">02</span>
+                  <span><strong>Live Git &amp; Claude Scanner:</strong> Inspects uncommitted diffs (<code class="font-mono text-xs">git diff -U1</code>) across <code class="font-mono text-xs">~/Dev</code> and counts today’s <code class="font-mono text-xs">~/.claude</code> turns &amp; live PIDs.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="text-periwinkle font-bold mt-0.5">03</span>
+                  <span><strong>7-Day Circadian Audit:</strong> Parses <code class="font-mono text-xs">pmset -g log</code>, <code class="font-mono text-xs">.zsh_history</code>, and commit timestamps to flag pre-6 AM starts, post-8 PM nights, and weekend drift.</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Visual Journey Card: The Open Loops Board -->
+            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-5 sm:p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-periwinkle font-semibold">
+                  Live Workstream Detected on Host Mac
+                </span>
+                <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-terracotta/15 text-terracottadark font-semibold">
+                  3 Open Loops
+                </span>
+              </div>
+
+              <div class="bg-surface border border-borderwarm rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="font-bold text-base text-charcoal" id="s2-repo-name">tracker</span>
+                    <span class="ml-2 font-mono text-xs px-2 py-0.5 rounded bg-surfacealt border border-borderwarm text-inkmuted">branch: main</span>
+                  </div>
+                  <span class="text-xs font-mono text-inkmuted">touched just now</span>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5">
+                  <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-surfacealt border border-borderwarm">app.py</span>
+                  <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-surfacealt border border-borderwarm">templates/index.html</span>
+                  <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-surfacealt border border-borderwarm">TOMORROW.md</span>
+                </div>
+
+                <pre class="bg-[#191918] text-[#E8E4DC] rounded-lg p-3 text-[11px] font-mono overflow-x-auto">+ @app.route("/api/park-context", methods=["POST"])
++ def api_park_context():
++     # Snapshots git diff + 9:00 AM resume command</pre>
+
+                <div class="pt-1 flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-mono text-sagedark font-semibold">✓ +23m working memory saved when parked</span>
+                  <span class="px-3 py-1.5 rounded-lg bg-charcoal text-white text-xs font-mono">
+                    📌 Save My Spot
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SLIDE 3 (#3): 1-CLICK SPOT SAVE & 5-MIN SCIENCE BIO-RESET         -->
+      <!-- ================================================================= -->
+      <section id="slide-3" class="slide-panel hidden space-y-6">
+        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-sage space-y-8">
+
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full bg-sage/15 text-sagedark font-mono text-xs font-semibold uppercase tracking-wider">
+                Slide 03 / 05 • User Journey: 03:20 PM
+              </span>
+              <span class="text-xs font-mono text-inkmuted">Act III — Cognitive Breadcrumb &amp; 5-Min Bio-Reset</span>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded bg-surfacealt border border-borderwarm text-charcoal">
+              1 Single Activity Per Break • Zero Text Clutter
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-6 space-y-4">
+              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+                Save your code spot in 1 click. Step away with <span class="text-sage font-normal">1 rotating reset</span>.
+              </h1>
+              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+                At 60 minutes of continuous work, Off-Duty fires a native macOS <code class="font-mono text-xs">osascript</code> &amp; browser notification. Clicking it snapshots Alex’s exact code spot into a <strong class="text-charcoal">1-line Cognitive Breadcrumb</strong> and opens a calm 5:00 reset.
+              </p>
+
+              <div class="grid grid-cols-2 gap-2.5 pt-2 text-xs">
+                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                  <div class="font-bold text-charcoal">💧 1. Hydration Reset</div>
+                  <div class="text-inkmuted mt-0.5">Reverses 1% dehydration prefrontal fatigue drop</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                  <div class="font-bold text-charcoal">🧍 2. Hip Flexor Unload</div>
+                  <div class="text-inkmuted mt-0.5">45s couch stretch restores 20% lung capacity</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                  <div class="font-bold text-charcoal">🔄 3. Thoracic Release</div>
+                  <div class="text-inkmuted mt-0.5">Unloads 45 lbs of forward-head neck tension</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                  <div class="font-bold text-charcoal">🌬️ 4. 20-20-20 + Sigh</div>
+                  <div class="text-inkmuted mt-0.5">20ft gaze + double-inhale slows heart rate</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Journey Card: The Ultra-Clean 5:00 Overlay Preview -->
+            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-6 space-y-4">
+              <div class="bg-surface border border-borderwarm rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs">
+                <span class="text-sagedark font-bold">✓ Spot Saved:</span>
+                <span class="text-charcoal truncate font-mono">3 modified files in /tracker on branch main</span>
+              </div>
+
+              <div class="bg-surface border border-borderwarm border-t-4 border-t-terracotta rounded-2xl p-6 text-center space-y-1">
+                <div class="text-[10px] font-mono uppercase tracking-widest text-inkmuted">Step Away From The Screen</div>
+                <div class="metric-number text-7xl text-charcoal py-1">05:00</div>
+                <div class="text-[11px] font-mono text-sagedark">Continuous work streak reset to 0m</div>
+              </div>
+
+              <div class="bg-surface border border-borderwarm border-t-4 border-t-sage rounded-2xl p-5 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-sage/15 text-sagedark font-semibold">
+                    Suggested Activity • Rotates Each Break
+                  </span>
+                  <span class="text-[11px] font-mono text-inkmuted">pmset displaysleepnow 🌙</span>
+                </div>
+                <div class="flex items-start gap-3 pt-1">
+                  <span class="text-3xl">💧</span>
+                  <div>
+                    <div class="font-bold text-base text-charcoal">Hydration Reset (1 min)</div>
+                    <p class="text-xs text-inkmuted">Walk away from your desk and drink a full glass of water while standing.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SLIDE 4 (#4): 8:00 PM EVENING SHUTDOWN COMMAND (IDEA #3)          -->
+      <!-- ================================================================= -->
+      <section id="slide-4" class="slide-panel hidden space-y-6">
+        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-charcoal space-y-8">
+
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full bg-charcoal text-[#F9F7F2] font-mono text-xs font-semibold uppercase tracking-wider">
+                Slide 04 / 05 • User Journey: 08:00 PM
+              </span>
+              <span class="text-xs font-mono text-inkmuted">Act IV — Official Idea #3: The One-Click Shutdown Command</span>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded bg-terracotta/15 text-terracottadark font-semibold">
+              Writes TOMORROW.md • SIGSTOP Agents • Locks Until 6 AM
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-6 space-y-4">
+              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+                8:00 PM Curfew: Park every repo, <span class="text-terracotta font-normal">freeze Claude PIDs</span>, and lock out.
+              </h1>
+              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+                When 8:00 PM arrives, Alex clicks <strong class="text-charcoal">“End Workday: Park All, Pause Claude &amp; Lock”</strong>. In one atomic action, Off-Duty clears Alex’s mental RAM and enforces a circadian boundary until 6:00 AM:
+              </p>
+
+              <ul class="space-y-3 text-xs sm:text-sm text-charcoal pt-1">
+                <li class="flex items-start gap-2.5">
+                  <span class="text-terracotta font-bold mt-0.5">1.</span>
+                  <span><strong>Writes <code class="font-mono text-xs">TOMORROW.md</code> to Disk:</strong> Saves open branches, uncommitted file checklists, <code class="font-mono text-xs">git diff --stat</code>, and the exact 9:00 AM first step to project root &amp; Desktop.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="text-terracotta font-bold mt-0.5">2.</span>
+                  <span><strong>Suspends Spinning AI Agents (<code class="font-mono text-xs">SIGSTOP</code>):</strong> Detects live <code class="font-mono text-xs">claude</code> CLI processes via <code class="font-mono text-xs">pgrep</code>, pauses them safely overnight, and generates <code class="font-mono text-xs">./morning_resume.sh</code>.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="text-terracotta font-bold mt-0.5">3.</span>
+                  <span><strong>Hard-Core Curfew Lockout + Hardware Display Sleep:</strong> Engages full-screen countdown until 06:00 AM and triggers <code class="font-mono text-xs">pmset displaysleepnow</code>.</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Visual Journey Card: Dark Lockout Receipt & TOMORROW.md -->
+            <div class="lg:col-span-6 bg-[#191918] text-[#F9F7F2] rounded-2xl p-6 space-y-4 border border-[#35332E]">
+              <div class="flex items-center justify-between border-b border-[#35332E] pb-3">
+                <span class="text-xs font-mono uppercase tracking-wider text-[#7FB08E]">
+                  ✓ Synced to ./TOMORROW.md &amp; ~/Desktop/TOMORROW.md
+                </span>
+                <span class="text-xs font-mono text-[#F28C68]">Curfew Locked → 06:00 AM</span>
+              </div>
+
+              <pre class="bg-[#242320] border border-[#35332E] rounded-xl p-4 text-[11px] font-mono text-[#E8E4DC] overflow-x-auto leading-relaxed"># TOMORROW.md — Off-Duty Shutdown Handoff
+- Circadian Boundary Protected: Until 06:00 AM (10.0 hrs off-grid)
+- Working Memory Offloaded: ~92 mins of context-recovery saved
+
+## 1. Your 9:00 AM First Step (Zero-Prompt Breadcrumb)
+> Saved your spot: 3 modified file(s) in /tracker on branch main
+- [ ] Resume in `/Users/gui/Dev/tracker` -> inspect `app.py`
+- [ ] Run `./morning_resume.sh` (sends SIGCONT to paused Claude PIDs)</pre>
+
+              <div class="grid grid-cols-3 gap-2 pt-1 text-center font-mono text-xs">
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+                  <div class="text-[#7FB08E] font-bold">10.0 hrs</div>
+                  <div class="text-[10px] text-[#A8A296]">Sleep Protected</div>
+                </div>
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+                  <div class="text-[#7FB08E] font-bold">~92 mins</div>
+                  <div class="text-[10px] text-[#A8A296]">RAM Offloaded</div>
+                </div>
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+                  <div class="text-[#F28C68] font-bold">SIGSTOP</div>
+                  <div class="text-[10px] text-[#A8A296]">Agents Paused</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SLIDE 5 (#5): 9:00 AM MORNING UNPACK & TIME RETURNED              -->
+      <!-- ================================================================= -->
+      <section id="slide-5" class="slide-panel hidden space-y-6">
+        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-sage space-y-8">
+
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full bg-sage text-white font-mono text-xs font-semibold uppercase tracking-wider">
+                Slide 05 / 05 • User Journey: 09:00 AM Next Day
+              </span>
+              <span class="text-xs font-mono text-inkmuted">Act V — 10-Second Morning Unpack &amp; Time Reclaimed</span>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded bg-sage/15 text-sagedark font-semibold">
+              Full Circle • Zero Lost Context
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+                9:00 AM: Click <span class="text-sage font-normal">☀ Morning Unpack</span> and re-enter flow in 10 seconds.
+              </h1>
+              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+                After a full night off-grid, Alex doesn’t waste 30 minutes wondering <em>“Where was I?”</em> across 4 terminals. One click on <strong class="text-charcoal">☀ Morning Unpack</strong> (or <strong class="text-charcoal">🚀 Resume in Editor</strong>) wakes paused Claude agents via <code class="font-mono text-xs">SIGCONT</code> and opens the exact last-edited file in Cursor or VS Code.
+              </p>
+
+              <!-- 3 Impact Pillars -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
+                  <div class="metric-number text-4xl text-charcoal">10h</div>
+                  <div class="text-xs font-bold text-charcoal mt-1">Protected Nightly</div>
+                  <p class="text-[11px] text-inkmuted mt-0.5">Hard circadian boundary from 8:00 PM to 6:00 AM.</p>
+                </div>
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
+                  <div class="metric-number text-4xl text-sage">23m</div>
+                  <div class="text-xs font-bold text-charcoal mt-1">Saved Per Repo</div>
+                  <p class="text-[11px] text-inkmuted mt-0.5">Instant morning ramp-up via <code class="font-mono">TOMORROW.md</code>.</p>
+                </div>
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
+                  <div class="metric-number text-4xl text-terracotta">0</div>
+                  <div class="text-xs font-bold text-charcoal mt-1">Manual Prompts</div>
+                  <p class="text-[11px] text-inkmuted mt-0.5">100% passive macOS hardware, Git &amp; Claude telemetry.</p>
+                </div>
+              </div>
+
+              <!-- CTA Bar -->
+              <div data-no-stage-nav class="pt-3 flex flex-wrap items-center gap-3">
+                <a href="/"
+                  class="px-6 py-3.5 rounded-2xl bg-terracotta hover:bg-terracottadark text-white text-sm font-semibold transition shadow-sm flex items-center gap-2">
+                  <span>🚀 Launch Live Off-Duty Dashboard</span>
+                  <span>→</span>
+                </a>
+                <button type="button" onclick="goToSlide(1)"
+                  class="px-4 py-3.5 rounded-2xl bg-surfacealt hover:bg-canvas border border-borderwarm text-xs font-mono text-charcoal transition">
+                  ↺ Replay Journey (#1)
+                </button>
+              </div>
+            </div>
+
+            <!-- Visual Journey Card: Complete Loop Summary -->
+            <div class="lg:col-span-5 bg-surfacealt border border-borderwarm rounded-2xl p-6 space-y-4">
+              <div class="text-xs font-mono uppercase tracking-wider text-sagedark font-semibold">
+                The Complete 24-Hour Bio-Boundary Loop
+              </div>
+
+              <div class="space-y-2.5 text-xs">
+                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-terracotta font-bold mr-1.5">#1</span>
+                    <strong class="text-charcoal">07:45 PM — Detect Drift</strong>
+                  </div>
+                  <span class="font-mono text-inkmuted">7d Audit</span>
+                </div>
+                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-periwinkle font-bold mr-1.5">#2</span>
+                    <strong class="text-charcoal">03:15 PM — Scan Open Loops</strong>
+                  </div>
+                  <span class="font-mono text-inkmuted">Git + Claude</span>
+                </div>
+                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-sage font-bold mr-1.5">#3</span>
+                    <strong class="text-charcoal">03:20 PM — 5m Bio-Reset</strong>
+                  </div>
+                  <span class="font-mono text-inkmuted">1 Rotating Protocol</span>
+                </div>
+                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-charcoal font-bold mr-1.5">#4</span>
+                    <strong class="text-charcoal">08:00 PM — Evening Shutdown</strong>
+                  </div>
+                  <span class="font-mono text-inkmuted">TOMORROW.md + SIGSTOP</span>
+                </div>
+                <div class="bg-sage/15 border border-sage/40 rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-sagedark font-bold mr-1.5">#5</span>
+                    <strong class="text-charcoal">09:00 AM — Morning Unpack</strong>
+                  </div>
+                  <span class="font-mono text-sagedark font-semibold">SIGCONT + Editor</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- BOTTOM NAVIGATION BAR (EXPLICIT LEFT / RIGHT BUTTONS + URL HASH INFO) -->
+  <!-- ===================================================================== -->
+  <footer data-no-stage-nav class="w-full border-t border-borderwarm bg-surface/90 backdrop-blur-sm z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+
+      <!-- Left Button -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        <button type="button" id="footer-prev-btn" onclick="prevSlide()"
+          class="px-4 py-2 rounded-xl card-surface hover:bg-surfacealt active:scale-95 text-xs font-mono font-semibold text-charcoal transition flex items-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
+          <span>←</span>
+          <span>Previous Slide</span>
+        </button>
+
+        <button type="button" id="footer-next-btn" onclick="nextSlide()"
+          class="sm:hidden px-4 py-2 rounded-xl bg-terracotta hover:bg-terracottadark active:scale-95 text-xs font-mono font-semibold text-white transition flex items-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
+          <span>Next Slide</span>
+          <span>→</span>
+        </button>
+      </div>
+
+      <!-- Center Hint & Current Hash Indicator -->
+      <div class="flex items-center gap-3 text-xs font-mono text-inkmuted">
+        <span id="slide-counter-badge" class="px-2.5 py-1 rounded bg-surfacealt border border-borderwarm text-charcoal font-semibold">
+          Slide 1 of 5 (#1)
+        </span>
+        <span class="hidden md:inline">• Click Left / Right side of screen or press <kbd class="px-1.5 py-0.5 rounded bg-surfacealt border border-borderwarm text-charcoal">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-surfacealt border border-borderwarm text-charcoal">→</kbd></span>
+      </div>
+
+      <!-- Right Button (Desktop) -->
+      <div class="hidden sm:flex items-center gap-2">
+        <button type="button" id="footer-next-btn-desktop" onclick="nextSlide()"
+          class="px-5 py-2 rounded-xl bg-terracotta hover:bg-terracottadark active:scale-95 text-xs font-mono font-semibold text-white transition flex items-center gap-2 shadow-sm disabled:opacity-40 disabled:pointer-events-none">
+          <span id="next-btn-label">Next Slide</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- SLIDE NAVIGATION & HASH SYNC JAVASCRIPT                               -->
+  <!-- ===================================================================== -->
+  <script>
+    const TOTAL_SLIDES = 5;
+    let currentSlide = 1;
+
+    function parseHashSlide() {
+      const raw = (window.location.hash || '').replace(/^#/, '').trim();
+      const num = parseInt(raw, 10);
+      if (!isNaN(num) && num >= 1 && num <= TOTAL_SLIDES) {
+        return num;
+      }
+      return 1;
+    }
+
+    function applySlideDOM(targetSlide) {
+      currentSlide = targetSlide;
+
+      for (let i = 1; i <= TOTAL_SLIDES; i++) {
+        const panel = document.getElementById(`slide-${i}`);
+        const stepBtn = document.getElementById(`step-btn-${i}`);
+        if (panel) {
+          if (i === currentSlide) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        }
+        if (stepBtn) {
+          if (i === currentSlide) {
+            stepBtn.className = 'step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5 bg-charcoal text-[#F9F7F2] shadow-sm';
+          } else if (i < currentSlide) {
+            stepBtn.className = 'step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5 bg-sage/15 text-sagedark hover:bg-sage/25';
+          } else {
+            stepBtn.className = 'step-pill px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-mono transition flex items-center gap-1.5 bg-surfacealt text-inkmuted hover:text-charcoal';
+          }
+        }
+      }
+
+      // Progress bar & counter
+      const pct = (currentSlide / TOTAL_SLIDES) * 100;
+      const bar = document.getElementById('slide-progress-bar');
+      if (bar) bar.style.width = `${pct}%`;
+
+      const badge = document.getElementById('slide-counter-badge');
+      if (badge) badge.textContent = `Slide ${currentSlide} of ${TOTAL_SLIDES} (#${currentSlide})`;
+
+      // Enable/disable paddles & buttons at bounds
+      const atStart = currentSlide <= 1;
+      const atEnd = currentSlide >= TOTAL_SLIDES;
+
+      ['left-paddle', 'footer-prev-btn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = atStart;
+      });
+      ['right-paddle', 'footer-next-btn', 'footer-next-btn-desktop'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = atEnd;
+      });
+
+      const nextLabel = document.getElementById('next-btn-label');
+      if (nextLabel) {
+        nextLabel.textContent = atEnd ? 'End of Journey' : `Next Slide (#${currentSlide + 1})`;
+      }
+
+      document.title = `Slide ${currentSlide}/${TOTAL_SLIDES} • Off-Duty User Journey`;
+    }
+
+    function navigateWithTransition(targetSlide, updateHash = true) {
+      const clamped = Math.max(1, Math.min(TOTAL_SLIDES, targetSlide));
+      if (clamped === currentSlide && window.location.hash === `#${clamped}`) {
+        applySlideDOM(clamped);
+        return;
+      }
+
+      const direction = clamped >= currentSlide ? 'forward' : 'backward';
+      const updateDOM = () => {
+        applySlideDOM(clamped);
+        if (updateHash) {
+          if (window.location.hash !== `#${clamped}`) {
+            history.pushState(null, '', `#${clamped}`);
+          }
+        }
+      };
+
+      if (!document.startViewTransition) {
+        updateDOM();
+        return;
+      }
+
+      try {
+        document.startViewTransition({
+          update: updateDOM,
+          types: [direction]
+        });
+      } catch (_) {
+        document.startViewTransition(updateDOM);
+      }
+    }
+
+    function goToSlide(num) {
+      navigateWithTransition(num, true);
+    }
+
+    function nextSlide() {
+      if (currentSlide < TOTAL_SLIDES) {
+        navigateWithTransition(currentSlide + 1, true);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        navigateWithTransition(currentSlide - 1, true);
+      }
+    }
+
+    // Click right or left half of the slide stage to navigate
+    document.getElementById('slide-stage').addEventListener('click', (e) => {
+      if (e.target.closest('a, button, input, select, textarea, [data-no-stage-nav]')) {
+        return;
+      }
+      const selection = window.getSelection ? window.getSelection().toString() : '';
+      if (selection && selection.length > 0) {
+        return;
+      }
+      const midX = window.innerWidth / 2;
+      if (e.clientX < midX) {
+        prevSlide();
+      } else {
+        nextSlide();
+      }
+    });
+
+    // Keyboard navigation (Left / Right arrows, Space, 1-5)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.matches('input, textarea, select')) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key >= '1' && e.key <= '5') {
+        goToSlide(parseInt(e.key, 10));
+      }
+    });
+
+    // Sync with browser URL hash (#1 .. #5)
+    window.addEventListener('hashchange', () => {
+      const target = parseHashSlide();
+      navigateWithTransition(target, false);
+    });
+
+    // Initial load: ensure URL has #1..#5 and render immediately
+    (function initSlides() {
+      const initial = parseHashSlide();
+      if (!window.location.hash || window.location.hash !== `#${initial}`) {
+        history.replaceState(null, '', `#${initial}`);
+      }
+      applySlideDOM(initial);
+
+      // Hydrate live host telemetry badge softly in background
+      fetch('/api/telemetry')
+        .then(r => r.json())
+        .then(data => {
+          const jm = data.juggling_metrics || {};
+          if (jm.active_repos_count) {
+            const elRepos = document.getElementById('s1-live-repos');
+            if (elRepos) elRepos.textContent = String(jm.active_repos_count);
+          }
+          if (jm.uncommitted_file_count !== undefined && jm.uncommitted_file_count > 0) {
+            const elLoops = document.getElementById('s1-live-loops');
+            if (elLoops) elLoops.textContent = String(jm.uncommitted_file_count);
+          }
+          if (data.scan_duration_ms !== undefined) {
+            const pill = document.getElementById('s2-latency-pill');
+            if (pill) pill.textContent = `Live Host Scan: ${data.scan_duration_ms}ms • Zero Prompts`;
+          }
+        })
+        .catch(() => {});
+    })();
+  </script>
+</body>
+</html>
