@@ -91,13 +91,13 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between font-sans selection:bg-terracotta/20 selection:text-charcoal overflow-x-hidden">
+<body class="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between font-sans selection:bg-terracotta/20 selection:text-charcoal overflow-x-hidden">
 
   <!-- ===================================================================== -->
   <!-- TOP BAR: BRAND + 5-STEP USER JOURNEY TIMELINE + LIVE APP LINK          -->
   <!-- ===================================================================== -->
-  <header data-no-stage-nav class="w-full border-b border-borderwarm bg-surface/90 backdrop-blur-sm z-30">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+  <header data-no-stage-nav class="w-full border-b border-borderwarm bg-surface/90 backdrop-blur-sm z-30 shrink-0">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-4">
 
       <!-- Brand & Pitch Badge -->
       <div class="flex items-center gap-3">
@@ -160,7 +160,7 @@
   <!-- ===================================================================== -->
   <!-- MAIN SLIDE STAGE (CLICK LEFT OR RIGHT TO NAVIGATE)                    -->
   <!-- ===================================================================== -->
-  <main id="slide-stage" class="relative flex-1 flex items-center justify-center px-4 sm:px-16 py-6 sm:py-10 cursor-pointer"
+  <main id="slide-stage" class="relative flex-1 min-h-0 flex items-center justify-center px-4 sm:px-16 py-3 sm:py-5 cursor-pointer"
     title="Click right side for Next slide, left side for Previous slide">
 
     <!-- Left Floating Click Paddle -->
@@ -181,11 +181,11 @@
       <!-- ================================================================= -->
       <!-- SLIDE 1 (#1): THE PROBLEM — AI COMPRESSION BURNOUT                -->
       <!-- ================================================================= -->
-      <section id="slide-1" class="slide-panel space-y-6">
-        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-terracotta space-y-8">
+      <section id="slide-1" class="slide-panel">
+        <div class="card-surface rounded-3xl p-6 sm:p-8 border-t-[6px] border-t-terracotta space-y-5">
 
           <!-- Journey Timestamp & Pill -->
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-3.5">
             <div class="flex items-center gap-2.5">
               <span class="px-3 py-1 rounded-full bg-terracotta/15 text-terracottadark font-mono text-xs font-semibold uppercase tracking-wider">
                 Slide 01 / 05 • User Journey: 07:45 PM
@@ -198,21 +198,21 @@
           </div>
 
           <!-- Hero Pitch Headline -->
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-7 space-y-4">
-              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-7 space-y-3">
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-[42px] font-light text-charcoal leading-[1.12] tracking-tight">
                 AI killed natural pauses. Now <span class="text-terracotta font-normal">open code loops</span> keep engineers wired past 8 PM.
               </h1>
-              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+              <p class="text-xs sm:text-sm text-inkmuted leading-relaxed">
                 Meet <strong class="text-charcoal">Alex</strong>. It’s 7:45 PM. Instead of waiting for builds, Alex is juggling <strong class="text-charcoal">4 Git repos</strong> and <strong class="text-charcoal">3 Claude agents</strong> in parallel. Traditional screen blockers fail because locking a screen while 14 uncommitted files sit in working memory triggers anxiety—not rest.
               </p>
 
-              <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
+              <div class="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-3.5">
                   <div class="font-mono text-[11px] uppercase text-terracottadark font-semibold mb-1">✗ Why Screen Timers Fail</div>
                   <p class="text-inkmuted">They only track hours and nag you to stop—leaving half-written diffs spinning in your head all night.</p>
                 </div>
-                <div class="bg-sage/10 border border-sage/30 rounded-2xl p-4">
+                <div class="bg-sage/10 border border-sage/30 rounded-2xl p-3.5">
                   <div class="font-mono text-[11px] uppercase text-sagedark font-semibold mb-1">✓ The Off-Duty Insight</div>
                   <p class="text-charcoal">To close your laptop guilt-free, you have to <strong>park the mental state</strong> to disk first.</p>
                 </div>
@@ -220,8 +220,8 @@
             </div>
 
             <!-- Visual Journey Card: What Alex's Mac Looks Like at 7:45 PM -->
-            <div class="lg:col-span-5 bg-[#191918] text-[#F9F7F2] rounded-2xl p-6 space-y-5 border border-[#35332E]">
-              <div class="flex items-center justify-between border-b border-[#35332E] pb-3">
+            <div class="lg:col-span-5 bg-[#191918] text-[#F9F7F2] rounded-2xl p-5 space-y-4 border border-[#35332E]">
+              <div class="flex items-center justify-between border-b border-[#35332E] pb-2.5">
                 <span class="text-xs font-mono uppercase tracking-wider text-[#F28C68] flex items-center gap-2">
                   <span class="w-2 h-2 rounded-full bg-terracotta animate-pulse"></span>
                   Alex’s Brain at 07:45 PM
@@ -230,26 +230,26 @@
               </div>
 
               <div class="grid grid-cols-2 gap-3">
-                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3.5">
+                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3">
                   <div id="s1-live-repos" class="metric-number text-4xl text-[#F28C68]">4</div>
                   <div class="text-xs font-mono text-[#A8A296] mt-1">Parallel Git Repos</div>
                 </div>
-                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3.5">
+                <div class="bg-[#242320] border border-[#35332E] rounded-xl p-3">
                   <div id="s1-live-loops" class="metric-number text-4xl text-periwinkle">14</div>
                   <div class="text-xs font-mono text-[#A8A296] mt-1">Uncommitted Diffs</div>
                 </div>
               </div>
 
-              <div class="space-y-2 text-xs font-mono text-[#D5D0C5]">
-                <div class="flex justify-between py-1.5 border-b border-[#35332E]">
+              <div class="space-y-1.5 text-xs font-mono text-[#D5D0C5]">
+                <div class="flex justify-between py-1 border-b border-[#35332E]">
                   <span>Continuous active streak:</span>
                   <strong class="text-[#F28C68]">94m straight (0 breaks)</strong>
                 </div>
-                <div class="flex justify-between py-1.5 border-b border-[#35332E]">
+                <div class="flex justify-between py-1 border-b border-[#35332E]">
                   <span>Post-8:00 PM nights (7d):</span>
                   <strong class="text-[#F28C68]">4 nights flagged</strong>
                 </div>
-                <div class="flex justify-between py-1.5">
+                <div class="flex justify-between py-1">
                   <span>Background Claude PIDs:</span>
                   <strong class="text-white">Spinning in terminal</strong>
                 </div>
@@ -263,10 +263,10 @@
       <!-- ================================================================= -->
       <!-- SLIDE 2 (#2): LIVE TELEMETRY & OPEN LOOPS (OFFICIAL IDEA #1)      -->
       <!-- ================================================================= -->
-      <section id="slide-2" class="slide-panel hidden space-y-6">
-        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-periwinkle space-y-8">
+      <section id="slide-2" class="slide-panel hidden">
+        <div class="card-surface rounded-3xl p-6 sm:p-8 border-t-[6px] border-t-periwinkle space-y-5">
 
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-3.5">
             <div class="flex items-center gap-2.5">
               <span class="px-3 py-1 rounded-full bg-periwinkle/15 text-periwinkle font-mono text-xs font-semibold uppercase tracking-wider">
                 Slide 02 / 05 • User Journey: 03:15 PM
@@ -278,33 +278,33 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-6 space-y-4">
-              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-6 space-y-3">
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-[42px] font-light text-charcoal leading-[1.12] tracking-tight">
                 Zero journals. Off-Duty reads your <span class="text-periwinkle font-normal">real Mac &amp; Git state</span> automatically.
               </h1>
-              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+              <p class="text-xs sm:text-sm text-inkmuted leading-relaxed">
                 Alex opens <code class="font-mono text-xs bg-surfacealt px-1.5 py-0.5 rounded">http://127.0.0.1:5050</code>. Without typing a single word, Off-Duty scans the host Mac in milliseconds and surfaces every open code loop holding Alex’s working memory hostage.
               </p>
 
-              <ul class="space-y-3 text-xs sm:text-sm text-charcoal pt-1">
-                <li class="flex items-start gap-2.5">
+              <ul class="space-y-2 text-xs sm:text-sm text-charcoal pt-0.5">
+                <li class="flex items-start gap-2">
                   <span class="text-periwinkle font-bold mt-0.5">01</span>
-                  <span><strong>Hardware Idle Timer (<code class="font-mono text-xs">ioreg -c IOHIDSystem</code>):</strong> Tracks continuous active work streak; resets only after 5+ mins away from keyboard/mouse.</span>
+                  <span><strong>Hardware Idle (<code class="font-mono text-xs">IOHIDSystem</code>):</strong> Tracks continuous active streak; resets only after 5+ mins away.</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2">
                   <span class="text-periwinkle font-bold mt-0.5">02</span>
-                  <span><strong>Live Git &amp; Claude Scanner:</strong> Inspects uncommitted diffs (<code class="font-mono text-xs">git diff -U1</code>) across <code class="font-mono text-xs">~/Dev</code> and counts today’s <code class="font-mono text-xs">~/.claude</code> turns &amp; live PIDs.</span>
+                  <span><strong>Live Git &amp; Claude Scanner:</strong> Inspects uncommitted diffs (<code class="font-mono text-xs">git diff -U1</code>) across <code class="font-mono text-xs">~/Dev</code> and <code class="font-mono text-xs">~/.claude</code> PIDs.</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2">
                   <span class="text-periwinkle font-bold mt-0.5">03</span>
-                  <span><strong>7-Day Circadian Audit:</strong> Parses <code class="font-mono text-xs">pmset -g log</code>, <code class="font-mono text-xs">.zsh_history</code>, and commit timestamps to flag pre-6 AM starts, post-8 PM nights, and weekend drift.</span>
+                  <span><strong>7-Day Circadian Audit:</strong> Parses <code class="font-mono text-xs">pmset -g log</code> &amp; <code class="font-mono text-xs">.zsh_history</code> to flag pre-6 AM, post-8 PM &amp; weekend work.</span>
                 </li>
               </ul>
             </div>
 
             <!-- Visual Journey Card: The Open Loops Board -->
-            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-5 sm:p-6 space-y-4">
+            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-5 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-mono uppercase tracking-wider text-periwinkle font-semibold">
                   Live Workstream Detected on Host Mac
@@ -314,7 +314,7 @@
                 </span>
               </div>
 
-              <div class="bg-surface border border-borderwarm rounded-xl p-4 space-y-3">
+              <div class="bg-surface border border-borderwarm rounded-xl p-4 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <div>
                     <span class="font-bold text-base text-charcoal" id="s2-repo-name">tracker</span>
@@ -329,11 +329,11 @@
                   <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-surfacealt border border-borderwarm">TOMORROW.md</span>
                 </div>
 
-                <pre class="bg-[#191918] text-[#E8E4DC] rounded-lg p-3 text-[11px] font-mono overflow-x-auto">+ @app.route("/api/park-context", methods=["POST"])
+                <pre class="bg-[#191918] text-[#E8E4DC] rounded-lg p-2.5 text-[11px] font-mono overflow-x-auto leading-snug">+ @app.route("/api/park-context", methods=["POST"])
 + def api_park_context():
 +     # Snapshots git diff + 9:00 AM resume command</pre>
 
-                <div class="pt-1 flex items-center justify-between gap-2">
+                <div class="pt-0.5 flex items-center justify-between gap-2">
                   <span class="text-[11px] font-mono text-sagedark font-semibold">✓ +23m working memory saved when parked</span>
                   <span class="px-3 py-1.5 rounded-lg bg-charcoal text-white text-xs font-mono">
                     📌 Save My Spot
@@ -349,10 +349,10 @@
       <!-- ================================================================= -->
       <!-- SLIDE 3 (#3): 1-CLICK SPOT SAVE & 5-MIN SCIENCE BIO-RESET         -->
       <!-- ================================================================= -->
-      <section id="slide-3" class="slide-panel hidden space-y-6">
-        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-sage space-y-8">
+      <section id="slide-3" class="slide-panel hidden">
+        <div class="card-surface rounded-3xl p-6 sm:p-8 border-t-[6px] border-t-sage space-y-5">
 
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-3.5">
             <div class="flex items-center gap-2.5">
               <span class="px-3 py-1 rounded-full bg-sage/15 text-sagedark font-mono text-xs font-semibold uppercase tracking-wider">
                 Slide 03 / 05 • User Journey: 03:20 PM
@@ -364,59 +364,59 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-6 space-y-4">
-              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-6 space-y-3">
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-[42px] font-light text-charcoal leading-[1.12] tracking-tight">
                 Save your code spot in 1 click. Step away with <span class="text-sage font-normal">1 rotating reset</span>.
               </h1>
-              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+              <p class="text-xs sm:text-sm text-inkmuted leading-relaxed">
                 At 60 minutes of continuous work, Off-Duty fires a native macOS <code class="font-mono text-xs">osascript</code> &amp; browser notification. Clicking it snapshots Alex’s exact code spot into a <strong class="text-charcoal">1-line Cognitive Breadcrumb</strong> and opens a calm 5:00 reset.
               </p>
 
-              <div class="grid grid-cols-2 gap-2.5 pt-2 text-xs">
-                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+              <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+                <div class="p-2.5 rounded-xl bg-surfacealt border border-borderwarm">
                   <div class="font-bold text-charcoal">💧 1. Hydration Reset</div>
-                  <div class="text-inkmuted mt-0.5">Reverses 1% dehydration prefrontal fatigue drop</div>
+                  <div class="text-inkmuted mt-0.5">Reverses 1% dehydration prefrontal drop</div>
                 </div>
-                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                <div class="p-2.5 rounded-xl bg-surfacealt border border-borderwarm">
                   <div class="font-bold text-charcoal">🧍 2. Hip Flexor Unload</div>
-                  <div class="text-inkmuted mt-0.5">45s couch stretch restores 20% lung capacity</div>
+                  <div class="text-inkmuted mt-0.5">45s stretch restores 20% lung capacity</div>
                 </div>
-                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                <div class="p-2.5 rounded-xl bg-surfacealt border border-borderwarm">
                   <div class="font-bold text-charcoal">🔄 3. Thoracic Release</div>
-                  <div class="text-inkmuted mt-0.5">Unloads 45 lbs of forward-head neck tension</div>
+                  <div class="text-inkmuted mt-0.5">Unloads 45 lbs forward-head tension</div>
                 </div>
-                <div class="p-3 rounded-xl bg-surfacealt border border-borderwarm">
+                <div class="p-2.5 rounded-xl bg-surfacealt border border-borderwarm">
                   <div class="font-bold text-charcoal">🌬️ 4. 20-20-20 + Sigh</div>
-                  <div class="text-inkmuted mt-0.5">20ft gaze + double-inhale slows heart rate</div>
+                  <div class="text-inkmuted mt-0.5">20ft gaze + double-inhale slows HR</div>
                 </div>
               </div>
             </div>
 
             <!-- Visual Journey Card: The Ultra-Clean 5:00 Overlay Preview -->
-            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-6 space-y-4">
-              <div class="bg-surface border border-borderwarm rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs">
+            <div class="lg:col-span-6 bg-surfacealt border border-borderwarm rounded-2xl p-5 space-y-3">
+              <div class="bg-surface border border-borderwarm rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs">
                 <span class="text-sagedark font-bold">✓ Spot Saved:</span>
                 <span class="text-charcoal truncate font-mono">3 modified files in /tracker on branch main</span>
               </div>
 
-              <div class="bg-surface border border-borderwarm border-t-4 border-t-terracotta rounded-2xl p-6 text-center space-y-1">
+              <div class="bg-surface border border-borderwarm border-t-4 border-t-terracotta rounded-2xl p-4 text-center space-y-1">
                 <div class="text-[10px] font-mono uppercase tracking-widest text-inkmuted">Step Away From The Screen</div>
-                <div class="metric-number text-7xl text-charcoal py-1">05:00</div>
+                <div class="metric-number text-6xl text-charcoal py-0.5">05:00</div>
                 <div class="text-[11px] font-mono text-sagedark">Continuous work streak reset to 0m</div>
               </div>
 
-              <div class="bg-surface border border-borderwarm border-t-4 border-t-sage rounded-2xl p-5 space-y-2">
+              <div class="bg-surface border border-borderwarm border-t-4 border-t-sage rounded-2xl p-4 space-y-1.5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-sage/15 text-sagedark font-semibold">
                     Suggested Activity • Rotates Each Break
                   </span>
                   <span class="text-[11px] font-mono text-inkmuted">pmset displaysleepnow 🌙</span>
                 </div>
-                <div class="flex items-start gap-3 pt-1">
-                  <span class="text-3xl">💧</span>
+                <div class="flex items-start gap-3 pt-0.5">
+                  <span class="text-2xl">💧</span>
                   <div>
-                    <div class="font-bold text-base text-charcoal">Hydration Reset (1 min)</div>
+                    <div class="font-bold text-sm text-charcoal">Hydration Reset (1 min)</div>
                     <p class="text-xs text-inkmuted">Walk away from your desk and drink a full glass of water while standing.</p>
                   </div>
                 </div>
@@ -430,10 +430,10 @@
       <!-- ================================================================= -->
       <!-- SLIDE 4 (#4): 8:00 PM EVENING SHUTDOWN COMMAND (IDEA #3)          -->
       <!-- ================================================================= -->
-      <section id="slide-4" class="slide-panel hidden space-y-6">
-        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-charcoal space-y-8">
+      <section id="slide-4" class="slide-panel hidden">
+        <div class="card-surface rounded-3xl p-6 sm:p-8 border-t-[6px] border-t-charcoal space-y-5">
 
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-3.5">
             <div class="flex items-center gap-2.5">
               <span class="px-3 py-1 rounded-full bg-charcoal text-[#F9F7F2] font-mono text-xs font-semibold uppercase tracking-wider">
                 Slide 04 / 05 • User Journey: 08:00 PM
@@ -445,59 +445,58 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-6 space-y-4">
-              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
-                8:00 PM Curfew: Park every repo, <span class="text-terracotta font-normal">freeze Claude PIDs</span>, and lock out.
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-6 space-y-3">
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-[42px] font-light text-charcoal leading-[1.12] tracking-tight">
+                8:00 PM Curfew: Park every repo, <span class="text-terracotta font-normal">freeze Claude PIDs</span> &amp; lock out.
               </h1>
-              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
-                When 8:00 PM arrives, Alex clicks <strong class="text-charcoal">“End Workday: Park All, Pause Claude &amp; Lock”</strong>. In one atomic action, Off-Duty clears Alex’s mental RAM and enforces a circadian boundary until 6:00 AM:
+              <p class="text-xs sm:text-sm text-inkmuted leading-relaxed">
+                At 8:00 PM, Alex clicks <strong class="text-charcoal">“End Workday: Park All, Pause Claude &amp; Lock”</strong>. One atomic action clears mental RAM and locks the workspace until 6:00 AM:
               </p>
 
-              <ul class="space-y-3 text-xs sm:text-sm text-charcoal pt-1">
-                <li class="flex items-start gap-2.5">
+              <ul class="space-y-2 text-xs sm:text-sm text-charcoal pt-0.5">
+                <li class="flex items-start gap-2">
                   <span class="text-terracotta font-bold mt-0.5">1.</span>
-                  <span><strong>Writes <code class="font-mono text-xs">TOMORROW.md</code> to Disk:</strong> Saves open branches, uncommitted file checklists, <code class="font-mono text-xs">git diff --stat</code>, and the exact 9:00 AM first step to project root &amp; Desktop.</span>
+                  <span><strong>Writes <code class="font-mono text-xs">TOMORROW.md</code>:</strong> Saves branches, uncommitted diffs, and your exact 9:00 AM first step to disk.</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2">
                   <span class="text-terracotta font-bold mt-0.5">2.</span>
-                  <span><strong>Suspends Spinning AI Agents (<code class="font-mono text-xs">SIGSTOP</code>):</strong> Detects live <code class="font-mono text-xs">claude</code> CLI processes via <code class="font-mono text-xs">pgrep</code>, pauses them safely overnight, and generates <code class="font-mono text-xs">./morning_resume.sh</code>.</span>
+                  <span><strong>Pauses Spinning Agents (<code class="font-mono text-xs">SIGSTOP</code>):</strong> Freezes live <code class="font-mono text-xs">claude</code> PIDs overnight and writes <code class="font-mono text-xs">./morning_resume.sh</code>.</span>
                 </li>
-                <li class="flex items-start gap-2.5">
+                <li class="flex items-start gap-2">
                   <span class="text-terracotta font-bold mt-0.5">3.</span>
-                  <span><strong>Hard-Core Curfew Lockout + Hardware Display Sleep:</strong> Engages full-screen countdown until 06:00 AM and triggers <code class="font-mono text-xs">pmset displaysleepnow</code>.</span>
+                  <span><strong>Curfew Lockout + Display Sleep:</strong> Starts a live countdown until 06:00 AM and runs <code class="font-mono text-xs">pmset displaysleepnow</code>.</span>
                 </li>
               </ul>
             </div>
 
             <!-- Visual Journey Card: Dark Lockout Receipt & TOMORROW.md -->
-            <div class="lg:col-span-6 bg-[#191918] text-[#F9F7F2] rounded-2xl p-6 space-y-4 border border-[#35332E]">
-              <div class="flex items-center justify-between border-b border-[#35332E] pb-3">
+            <div class="lg:col-span-6 bg-[#191918] text-[#F9F7F2] rounded-2xl p-5 space-y-3 border border-[#35332E]">
+              <div class="flex items-center justify-between border-b border-[#35332E] pb-2.5">
                 <span class="text-xs font-mono uppercase tracking-wider text-[#7FB08E]">
                   ✓ Synced to ./TOMORROW.md &amp; ~/Desktop/TOMORROW.md
                 </span>
-                <span class="text-xs font-mono text-[#F28C68]">Curfew Locked → 06:00 AM</span>
+                <span class="text-xs font-mono text-[#F28C68]">Locked → 06:00 AM</span>
               </div>
 
-              <pre class="bg-[#242320] border border-[#35332E] rounded-xl p-4 text-[11px] font-mono text-[#E8E4DC] overflow-x-auto leading-relaxed"># TOMORROW.md — Off-Duty Shutdown Handoff
-- Circadian Boundary Protected: Until 06:00 AM (10.0 hrs off-grid)
-- Working Memory Offloaded: ~92 mins of context-recovery saved
+              <pre class="bg-[#242320] border border-[#35332E] rounded-xl p-3 text-[11px] font-mono text-[#E8E4DC] overflow-x-auto leading-snug"># TOMORROW.md — Off-Duty Shutdown Handoff
+- Circadian Protected: Until 06:00 AM (10.0h off-grid)
+- Working Memory Offloaded: ~92 mins saved
 
-## 1. Your 9:00 AM First Step (Zero-Prompt Breadcrumb)
-> Saved your spot: 3 modified file(s) in /tracker on branch main
-- [ ] Resume in `/Users/gui/Dev/tracker` -> inspect `app.py`
-- [ ] Run `./morning_resume.sh` (sends SIGCONT to paused Claude PIDs)</pre>
+## 1. Your 9:00 AM First Step
+> Saved spot: 3 modified files in /tracker (main)
+- [ ] Run `./morning_resume.sh` (SIGCONT Claude PIDs)</pre>
 
-              <div class="grid grid-cols-3 gap-2 pt-1 text-center font-mono text-xs">
-                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+              <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2">
                   <div class="text-[#7FB08E] font-bold">10.0 hrs</div>
                   <div class="text-[10px] text-[#A8A296]">Sleep Protected</div>
                 </div>
-                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2">
                   <div class="text-[#7FB08E] font-bold">~92 mins</div>
                   <div class="text-[10px] text-[#A8A296]">RAM Offloaded</div>
                 </div>
-                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2.5">
+                <div class="bg-[#242320] border border-[#35332E] rounded-lg p-2">
                   <div class="text-[#F28C68] font-bold">SIGSTOP</div>
                   <div class="text-[10px] text-[#A8A296]">Agents Paused</div>
                 </div>
@@ -511,10 +510,10 @@
       <!-- ================================================================= -->
       <!-- SLIDE 5 (#5): 9:00 AM MORNING UNPACK & TIME RETURNED              -->
       <!-- ================================================================= -->
-      <section id="slide-5" class="slide-panel hidden space-y-6">
-        <div class="card-surface rounded-3xl p-7 sm:p-11 border-t-[6px] border-t-sage space-y-8">
+      <section id="slide-5" class="slide-panel hidden">
+        <div class="card-surface rounded-3xl p-6 sm:p-8 border-t-[6px] border-t-sage space-y-5">
 
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderwarm pb-3.5">
             <div class="flex items-center gap-2.5">
               <span class="px-3 py-1 rounded-full bg-sage text-white font-mono text-xs font-semibold uppercase tracking-wider">
                 Slide 05 / 05 • User Journey: 09:00 AM Next Day
@@ -526,84 +525,84 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-7 space-y-4">
-              <h1 class="font-display text-3xl sm:text-5xl font-light text-charcoal leading-[1.12] tracking-tight">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-7 space-y-3">
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-[42px] font-light text-charcoal leading-[1.12] tracking-tight">
                 9:00 AM: Click <span class="text-sage font-normal">☀ Morning Unpack</span> and re-enter flow in 10 seconds.
               </h1>
-              <p class="text-sm sm:text-base text-inkmuted leading-relaxed">
+              <p class="text-xs sm:text-sm text-inkmuted leading-relaxed">
                 After a full night off-grid, Alex doesn’t waste 30 minutes wondering <em>“Where was I?”</em> across 4 terminals. One click on <strong class="text-charcoal">☀ Morning Unpack</strong> (or <strong class="text-charcoal">🚀 Resume in Editor</strong>) wakes paused Claude agents via <code class="font-mono text-xs">SIGCONT</code> and opens the exact last-edited file in Cursor or VS Code.
               </p>
 
               <!-- 3 Impact Pillars -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
-                  <div class="metric-number text-4xl text-charcoal">10h</div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-3.5">
+                  <div class="metric-number text-3xl sm:text-4xl text-charcoal">10h</div>
                   <div class="text-xs font-bold text-charcoal mt-1">Protected Nightly</div>
                   <p class="text-[11px] text-inkmuted mt-0.5">Hard circadian boundary from 8:00 PM to 6:00 AM.</p>
                 </div>
-                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
-                  <div class="metric-number text-4xl text-sage">23m</div>
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-3.5">
+                  <div class="metric-number text-3xl sm:text-4xl text-sage">23m</div>
                   <div class="text-xs font-bold text-charcoal mt-1">Saved Per Repo</div>
                   <p class="text-[11px] text-inkmuted mt-0.5">Instant morning ramp-up via <code class="font-mono">TOMORROW.md</code>.</p>
                 </div>
-                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-4">
-                  <div class="metric-number text-4xl text-terracotta">0</div>
+                <div class="bg-surfacealt border border-borderwarm rounded-2xl p-3.5">
+                  <div class="metric-number text-3xl sm:text-4xl text-terracotta">0</div>
                   <div class="text-xs font-bold text-charcoal mt-1">Manual Prompts</div>
                   <p class="text-[11px] text-inkmuted mt-0.5">100% passive macOS hardware, Git &amp; Claude telemetry.</p>
                 </div>
               </div>
 
               <!-- CTA Bar -->
-              <div data-no-stage-nav class="pt-3 flex flex-wrap items-center gap-3">
+              <div data-no-stage-nav class="pt-1 flex flex-wrap items-center gap-3">
                 <a href="/"
-                  class="px-6 py-3.5 rounded-2xl bg-terracotta hover:bg-terracottadark text-white text-sm font-semibold transition shadow-sm flex items-center gap-2">
+                  class="px-5 py-3 rounded-2xl bg-terracotta hover:bg-terracottadark text-white text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-2">
                   <span>🚀 Launch Live Off-Duty Dashboard</span>
                   <span>→</span>
                 </a>
                 <button type="button" onclick="goToSlide(1)"
-                  class="px-4 py-3.5 rounded-2xl bg-surfacealt hover:bg-canvas border border-borderwarm text-xs font-mono text-charcoal transition">
+                  class="px-4 py-3 rounded-2xl bg-surfacealt hover:bg-canvas border border-borderwarm text-xs font-mono text-charcoal transition">
                   ↺ Replay Journey (#1)
                 </button>
               </div>
             </div>
 
             <!-- Visual Journey Card: Complete Loop Summary -->
-            <div class="lg:col-span-5 bg-surfacealt border border-borderwarm rounded-2xl p-6 space-y-4">
+            <div class="lg:col-span-5 bg-surfacealt border border-borderwarm rounded-2xl p-5 space-y-3">
               <div class="text-xs font-mono uppercase tracking-wider text-sagedark font-semibold">
                 The Complete 24-Hour Bio-Boundary Loop
               </div>
 
-              <div class="space-y-2.5 text-xs">
-                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+              <div class="space-y-2 text-xs">
+                <div class="bg-surface border border-borderwarm rounded-xl p-2.5 flex items-center justify-between">
                   <div>
                     <span class="font-mono text-terracotta font-bold mr-1.5">#1</span>
                     <strong class="text-charcoal">07:45 PM — Detect Drift</strong>
                   </div>
                   <span class="font-mono text-inkmuted">7d Audit</span>
                 </div>
-                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-surface border border-borderwarm rounded-xl p-2.5 flex items-center justify-between">
                   <div>
                     <span class="font-mono text-periwinkle font-bold mr-1.5">#2</span>
                     <strong class="text-charcoal">03:15 PM — Scan Open Loops</strong>
                   </div>
                   <span class="font-mono text-inkmuted">Git + Claude</span>
                 </div>
-                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-surface border border-borderwarm rounded-xl p-2.5 flex items-center justify-between">
                   <div>
                     <span class="font-mono text-sage font-bold mr-1.5">#3</span>
                     <strong class="text-charcoal">03:20 PM — 5m Bio-Reset</strong>
                   </div>
                   <span class="font-mono text-inkmuted">1 Rotating Protocol</span>
                 </div>
-                <div class="bg-surface border border-borderwarm rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-surface border border-borderwarm rounded-xl p-2.5 flex items-center justify-between">
                   <div>
                     <span class="font-mono text-charcoal font-bold mr-1.5">#4</span>
                     <strong class="text-charcoal">08:00 PM — Evening Shutdown</strong>
                   </div>
                   <span class="font-mono text-inkmuted">TOMORROW.md + SIGSTOP</span>
                 </div>
-                <div class="bg-sage/15 border border-sage/40 rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-sage/15 border border-sage/40 rounded-xl p-2.5 flex items-center justify-between">
                   <div>
                     <span class="font-mono text-sagedark font-bold mr-1.5">#5</span>
                     <strong class="text-charcoal">09:00 AM — Morning Unpack</strong>
@@ -623,8 +622,8 @@
   <!-- ===================================================================== -->
   <!-- BOTTOM NAVIGATION BAR (EXPLICIT LEFT / RIGHT BUTTONS + URL HASH INFO) -->
   <!-- ===================================================================== -->
-  <footer data-no-stage-nav class="w-full border-t border-borderwarm bg-surface/90 backdrop-blur-sm z-30">
-    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+  <footer data-no-stage-nav class="w-full border-t border-borderwarm bg-surface/90 backdrop-blur-sm z-30 shrink-0">
+    <div class="max-w-6xl mx-auto px-4 sm:px-8 py-2.5 sm:py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
 
       <!-- Left Button -->
       <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
