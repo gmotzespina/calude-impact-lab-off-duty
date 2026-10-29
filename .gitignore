@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.offduty_state.json
+TOMORROW.md
+morning_resume.sh
+resume_agents.sh

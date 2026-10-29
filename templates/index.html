@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Off-Duty — AI Context Decompression &amp; Shutdown Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#EDEAE2',
+            surface: '#F9F7F2',
+            surfacealt: '#F1EFE9',
+            charcoal: '#191918',
+            inkmuted: '#57554F',
+            borderwarm: '#DFDCD3',
+            terracotta: '#D46A43',
+            terracottadark: '#B8532E',
+            periwinkle: '#7C72B8',
+            sage: '#578E7E',
+            sagedark: '#427062',
+            amberwarm: '#C88A2B'
+          },
+          fontFamily: {
+            display: ['"Newsreader"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"SF Mono"', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #EDEAE2;
+      color: #191918;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card-surface {
+      background-color: #F9F7F2;
+      border: 1px solid #DFDCD3;
+      box-shadow: 0 2px 10px rgba(25, 25, 24, 0.03);
+    }
+    .metric-number {
+      font-family: 'Newsreader', Georgia, serif;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    @keyframes breatheCircle {
+      0%, 100% { transform: scale(1); opacity: 0.75; }
+      35% { transform: scale(1.32); opacity: 0.95; }
+      48% { transform: scale(1.48); opacity: 1; }
+    }
+    .breathe-orb {
+      animation: breatheCircle 10s ease-in-out infinite;
+    }
+    @keyframes progressIndeterminate {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+    .loading-bar-inner {
+      width: 45%;
+      animation: progressIndeterminate 1.1s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans selection:bg-terracotta/20 selection:text-charcoal">
+
+  <!-- TOP GLOBAL LOADING PROGRESS BAR -->
+  <div id="global-loading-bar" class="fixed top-0 left-0 right-0 h-1 bg-terracotta/20 z-50 overflow-hidden transition-opacity duration-200">
+    <div class="h-full bg-terracotta loading-bar-inner"></div>
+  </div>
+
+  <!-- FLOATING STATUS TOAST -->
+  <div id="status-toast" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-200">
+    <div class="bg-charcoal text-[#F9F7F2] border border-[#35332E] px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2.5 text-xs font-mono">
+      <span id="toast-dot" class="w-2 h-2 rounded-full bg-sage"></span>
+      <span id="toast-text">Ready</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10 space-y-8">
+
+    <!-- MINIMAL EDITORIAL HEADER -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <span class="font-display text-2xl sm:text-3xl font-normal tracking-tight text-charcoal">Off-Duty</span>
+          <span class="text-xs font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-charcoal text-[#F9F7F2]">
+            For Engineers &amp; Knowledge Workers
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-inkmuted mt-1">
+          Screen blockers only track hours. Off-Duty cures <strong class="text-charcoal font-semibold">AI compression burnout</strong> by parking your open Git diffs &amp; Claude loops so your brain can let go.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 self-start sm:self-auto shrink-0">
+        <a href="/slides#1" title="Open the 5-Slide User Journey Pitch Deck"
+          class="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-terracotta text-white hover:bg-terracottadark active:scale-95 transition flex items-center gap-1.5 shadow-sm">
+          <span>📽️ 5-Slide Pitch</span>
+          <span>→</span>
+        </a>
+        <button type="button" onclick="sendBreakNotification(true)" title="Send a real macOS & Browser notification (click it to jump here & start a break)"
+          class="card-surface px-3 py-1.5 rounded-full text-xs font-mono text-charcoal hover:bg-surfacealt active:scale-95 transition flex items-center gap-1.5">
+          <span>🔔 Test 60m Alert</span>
+        </button>
+        <div id="verdict-badge" class="card-surface px-3.5 py-1.5 rounded-full flex items-center gap-2 text-xs font-medium">
+          <span id="verdict-dot" class="w-2 h-2 rounded-full bg-sage"></span>
+          <span id="verdict-text" class="text-charcoal">Scanning macOS...</span>
+        </div>
+        <button id="refresh-telemetry-btn" onclick="fetchTelemetry(true)" title="Refresh live macOS telemetry"
+          class="card-surface px-3 py-1.5 rounded-full text-xs font-mono text-inkmuted hover:text-charcoal active:scale-95 transition flex items-center gap-1.5 disabled:opacity-50">
+          <svg id="refresh-spinner" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span id="scan-latency-badge">live</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- THE 4 EDITORIAL CARDS (CARD #1 IS NOW THE 1-CLICK BIO-RESET)          -->
+    <!-- ===================================================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- CARD 1: TERRACOTTA — BIO-RESET (CLICKABLE FIRST CARD WITH NEXT ACTIVITY) -->
+      <div onclick="triggerScienceBreak(false)"
+        class="card-surface rounded-2xl p-7 border-t-[5px] border-t-terracotta flex flex-col justify-between cursor-pointer hover:border-terracotta/60 hover:shadow-md transition group">
+        <div>
+          <div class="flex items-baseline justify-between mb-5">
+            <div class="metric-number text-6xl sm:text-7xl text-terracotta">
+              5:00
+            </div>
+            <span id="card-metric-streak-badge" class="text-xs font-mono px-2 py-0.5 rounded-full bg-terracotta/15 text-terracottadark font-semibold">
+              0m streak
+            </span>
+          </div>
+          <h2 class="text-lg font-bold text-charcoal mb-4">
+            Take a Bio-Reset now
+          </h2>
+          <ul class="space-y-2.5 text-sm text-inkmuted leading-snug">
+            <li class="flex items-start gap-2.5">
+              <span class="text-terracotta font-bold mt-0.5">✓</span>
+              <span>Next up: <strong id="next-activity-preview" class="text-charcoal font-semibold">💧 Drink a glass of water</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-terracotta font-bold mt-0.5">✓</span>
+              <span>Rotates activity each break (no repeats)</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-terracotta font-bold mt-0.5">✓</span>
+              <span>Idle: <strong id="idle-seconds" class="text-charcoal font-medium">0.0s</strong> • <strong id="breaks-count-banner" class="text-charcoal font-medium">0</strong> resets today</span>
+            </li>
+          </ul>
+        </div>
+
+        <button type="button" id="card1-break-btn"
+          class="mt-6 w-full py-2.5 px-4 rounded-xl bg-terracotta group-hover:bg-terracottadark text-white text-xs font-mono uppercase tracking-wider font-semibold transition flex items-center justify-between">
+          <span id="card1-btn-label">Start 5-Min Bio-Reset</span>
+          <span>→</span>
+        </button>
+      </div>
+
+      <!-- CARD 2: PERIWINKLE — OPEN CODE LOOPS & PARALLEL STREAMS -->
+      <div class="card-surface rounded-2xl p-7 border-t-[5px] border-t-periwinkle flex flex-col justify-between">
+        <div>
+          <div id="card-metric-loops" class="metric-number text-6xl sm:text-7xl text-periwinkle mb-5">
+            0
+          </div>
+          <h2 class="text-lg font-bold text-charcoal mb-4">
+            Open code loops
+          </h2>
+          <ul class="space-y-3 text-sm text-inkmuted leading-snug">
+            <li class="flex items-start gap-2.5">
+              <span class="text-periwinkle font-bold mt-0.5">✓</span>
+              <span>Uncommitted files across <strong id="card-metric-juggling" class="text-charcoal font-medium">1</strong> active repo(s)</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-periwinkle font-bold mt-0.5">✓</span>
+              <span><strong id="claude-turns-count" class="text-charcoal font-medium">0</strong> Claude turns • <strong id="running-agents-count" class="text-charcoal font-medium">0</strong> live PIDs</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-periwinkle font-bold mt-0.5">✓</span>
+              <span><strong id="parked-loops-status" class="text-charcoal font-medium">0 parked</strong> to <code class="text-xs font-mono">TOMORROW.md</code></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 3: SAGE — 7-DAY CIRCADIAN BOUNDARIES -->
+      <div class="card-surface rounded-2xl p-7 border-t-[5px] border-t-sage flex flex-col justify-between">
+        <div>
+          <div id="post-8pm-count" class="metric-number text-6xl sm:text-7xl text-sage mb-5">
+            0
+          </div>
+          <h2 class="text-lg font-bold text-charcoal mb-4">
+            After-hours nights (7d)
+          </h2>
+          <ul class="space-y-3 text-sm text-inkmuted leading-snug">
+            <li class="flex items-start gap-2.5">
+              <span class="text-sage font-bold mt-0.5">✓</span>
+              <span>Today's window: <strong id="today-window-label" class="text-charcoal font-medium">—</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-sage font-bold mt-0.5">✓</span>
+              <span><strong id="pre-6am-count" class="text-charcoal font-medium">0</strong> pre-6:00 AM starts this week</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-sage font-bold mt-0.5">✓</span>
+              <span><strong id="weekend-days-count" class="text-charcoal font-medium">0</strong> weekend days worked (Sat/Sun)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 4: CHARCOAL — GIVES TIME BACK -->
+      <div class="card-surface rounded-2xl p-7 border-t-[5px] border-t-charcoal flex flex-col justify-between">
+        <div>
+          <div id="card-metric-reclaimed" class="metric-number text-6xl sm:text-7xl text-charcoal mb-5">
+            10h
+          </div>
+          <h2 class="text-lg font-bold text-charcoal mb-4">
+            Gives time back
+          </h2>
+          <ul class="space-y-3 text-sm text-inkmuted leading-snug">
+            <li class="flex items-start gap-2.5">
+              <span class="text-charcoal font-bold mt-0.5">✓</span>
+              <span>Off-grid protected until <strong class="text-charcoal font-medium">06:00 AM</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-charcoal font-bold mt-0.5">✓</span>
+              <span>~<strong id="memory-saved-est" class="text-charcoal font-medium">23m</strong> morning ramp-up saved</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-charcoal font-bold mt-0.5">✓</span>
+              <span><strong id="reclaimed-mins-banner" class="text-charcoal font-medium">0m</strong> bio-recovery reclaimed today</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- CENTERPIECE: ACTIVE WORKSTREAMS & OPEN LOOPS BOARD (ANTI-JOMO CORE)   -->
+    <!-- ===================================================================== -->
+    <section class="card-surface rounded-3xl p-6 sm:p-8 border-t-[5px] border-t-charcoal space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-borderwarm pb-5">
+        <div class="space-y-1.5">
+          <div class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-terracottadark font-semibold">
+            <span class="w-2 h-2 rounded-full bg-terracotta animate-pulse"></span>
+            <span>Active Context Decompression • Live Git &amp; Claude Scanner</span>
+          </div>
+          <h2 class="font-display text-2xl sm:text-4xl font-light text-charcoal tracking-tight">
+            Open Loops Holding Your Brain Hostage
+          </h2>
+          <p class="text-xs sm:text-sm text-inkmuted max-w-3xl">
+            You can't relax when unfinished code is sitting in working memory. Below are the live repositories and uncommitted diffs detected on your Mac—park them to <code class="font-mono text-xs bg-surfacealt px-1.5 py-0.5 rounded">TOMORROW.md</code> with one click so you can step away guilt-free.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="unpackMorning()"
+            class="px-3.5 py-2 rounded-xl border border-borderwarm bg-surfacealt hover:bg-canvas text-xs font-mono text-charcoal transition">
+            ☀ Morning Unpack (Resume All)
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic List of Open Workstreams (Repos + Live Diff Snippets + 1-Click Park) -->
+      <div id="workstreams-board" class="space-y-4">
+        <div class="h-32 rounded-2xl bg-surfacealt animate-pulse"></div>
+      </div>
+
+      <!-- Bottom Primary Action Bar (Inside the Board) -->
+      <div class="pt-4 border-t border-borderwarm grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Action 1: 5-Min Physiological Reset -->
+        <button id="trigger-break-btn" onclick="triggerScienceBreak(false)"
+          class="w-full py-4 px-6 rounded-2xl bg-sage hover:bg-sagedark active:scale-[0.99] text-white text-left transition shadow-sm flex items-center justify-between gap-4 group disabled:opacity-60">
+          <div>
+            <div class="font-semibold text-base sm:text-lg flex items-center gap-2">
+              <svg id="break-btn-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span id="break-btn-label">Park Spot &amp; Take 5-Min Bio-Reset</span>
+            </div>
+            <div class="text-xs text-white/85 mt-0.5">
+              Suggests 1 non-repeating physical reset • Saves your code spot
+            </div>
+          </div>
+          <span class="font-display text-2xl font-light opacity-90 group-hover:translate-x-0.5 transition shrink-0">5:00 →</span>
+        </button>
+
+        <!-- Action 2: Full Evening Shutdown Command -->
+        <button id="shutdown-btn" onclick="executeShutdown(false)"
+          class="w-full py-4 px-6 rounded-2xl bg-terracotta hover:bg-terracottadark active:scale-[0.99] text-white text-left transition shadow-sm flex items-center justify-between gap-4 group disabled:opacity-60">
+          <div>
+            <div class="font-semibold text-base sm:text-lg flex items-center gap-2">
+              <svg id="shutdown-btn-spinner" class="hidden w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span id="shutdown-btn-label">End Workday: Park All, Pause Claude &amp; Lock</span>
+            </div>
+            <div class="text-xs text-white/85 mt-0.5">
+              Writes <code class="font-mono">TOMORROW.md</code> • Freezes agent PIDs (<code class="font-mono">SIGSTOP</code>) • Curfew until 6 AM
+            </div>
+          </div>
+          <span class="font-display text-2xl font-light opacity-90 group-hover:translate-x-0.5 transition shrink-0">🌙 →</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PROGRESSIVE DISCLOSURE DRAWERS (SETTINGS & RAW MACOS PROOF)           -->
+    <!-- ===================================================================== -->
+    <section class="space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" onclick="toggleDrawer('guardrails-drawer')"
+            class="card-surface px-4 py-2.5 rounded-full text-xs font-medium text-charcoal hover:bg-surfacealt transition flex items-center gap-2">
+            <span>⚙ Customize Bio-Guardrails &amp; Break Protocols</span>
+            <span id="guardrails-drawer-arrow" class="text-inkmuted">▾</span>
+          </button>
+
+          <button type="button" onclick="toggleDrawer('telemetry-proof-drawer')"
+            class="card-surface px-4 py-2.5 rounded-full text-xs font-medium text-charcoal hover:bg-surfacealt transition flex items-center gap-2">
+            <span>🔍 Inspect 7-Day Circadian Timeline &amp; macOS Sources</span>
+            <span id="telemetry-proof-drawer-arrow" class="text-inkmuted">▾</span>
+          </button>
+        </div>
+
+        <span id="settings-saved-indicator" class="text-xs font-mono text-sagedark opacity-0 transition-opacity duration-200">
+          <span id="settings-status-text">✓ Saved to ~/.offduty_state.json</span>
+        </span>
+      </div>
+
+      <!-- DRAWER 1: CUSTOMIZE BIO-GUARDRAILS & SCIENCE PROTOCOLS -->
+      <div id="guardrails-drawer" class="hidden card-surface rounded-2xl p-6 space-y-5">
+        <div class="flex items-center justify-between border-b border-borderwarm pb-3">
+          <div>
+            <h3 class="font-bold text-base text-charcoal">Bio-Boundary Guardrails &amp; Science Protocols</h3>
+            <p class="text-xs text-inkmuted">Saved automatically to <code class="font-mono">~/.offduty_state.json</code> on click.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button type="button" data-protocol="water" onclick="toggleProtocol('water')"
+              class="protocol-pill text-left p-3.5 rounded-xl border transition flex items-start justify-between gap-2">
+              <div>
+                <div class="text-sm font-semibold text-charcoal">💧 Water &amp; Hydration</div>
+                <div class="text-xs text-inkmuted">Drink a glass of water standing</div>
+              </div>
+              <span class="pill-check text-xs font-mono px-2 py-0.5 rounded">ON</span>
+            </button>
+
+            <button type="button" data-protocol="posture" onclick="toggleProtocol('posture')"
+              class="protocol-pill text-left p-3.5 rounded-xl border transition flex items-start justify-between gap-2">
+              <div>
+                <div class="text-sm font-semibold text-charcoal">🧍 Posture &amp; Hip Unload</div>
+                <div class="text-xs text-inkmuted">Stand switch + hip flexor stretch</div>
+              </div>
+              <span class="pill-check text-xs font-mono px-2 py-0.5 rounded">ON</span>
+            </button>
+
+            <button type="button" data-protocol="mobility" onclick="toggleProtocol('mobility')"
+              class="protocol-pill text-left p-3.5 rounded-xl border transition flex items-start justify-between gap-2">
+              <div>
+                <div class="text-sm font-semibold text-charcoal">🔄 Thoracic Mobility</div>
+                <div class="text-xs text-inkmuted">Upper-back extension &amp; shoulder rolls</div>
+              </div>
+              <span class="pill-check text-xs font-mono px-2 py-0.5 rounded">ON</span>
+            </button>
+
+            <button type="button" data-protocol="breathwork" onclick="toggleProtocol('breathwork')"
+              class="protocol-pill text-left p-3.5 rounded-xl border transition flex items-start justify-between gap-2">
+              <div>
+                <div class="text-sm font-semibold text-charcoal">🌬️ 20-20-20 + Sigh</div>
+                <div class="text-xs text-inkmuted">20ft gaze + 5 double-inhale sighs</div>
+              </div>
+              <span class="pill-check text-xs font-mono px-2 py-0.5 rounded">ON</span>
+            </button>
+          </div>
+
+          <div class="lg:col-span-5 bg-surfacealt rounded-xl p-4 border border-borderwarm space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="break-interval-select" class="block text-[11px] font-mono uppercase text-inkmuted mb-1">Break Threshold</label>
+                <select id="break-interval-select" onchange="saveSettingsFromUI()"
+                  class="w-full bg-surface border border-borderwarm rounded-lg px-2.5 py-1.5 text-sm font-mono text-charcoal cursor-pointer">
+                  <option value="45">Every 45 mins</option>
+                  <option value="60" selected>Every 60 mins</option>
+                  <option value="90">Every 90 mins</option>
+                </select>
+              </div>
+              <div>
+                <label for="curfew-select" class="block text-[11px] font-mono uppercase text-inkmuted mb-1">Curfew Window</label>
+                <select id="curfew-select" onchange="saveSettingsFromUI()"
+                  class="w-full bg-surface border border-borderwarm rounded-lg px-2.5 py-1.5 text-sm font-mono text-charcoal cursor-pointer">
+                  <option value="19-6">19:00 → 06:00</option>
+                  <option value="20-6" selected>20:00 → 06:00 (8 PM)</option>
+                  <option value="21-6">21:00 → 06:00</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-borderwarm flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold text-charcoal">Hard-Core Curfew Lockout</div>
+                <div class="text-xs text-inkmuted">Highlight evening curfew between 8:00 PM &amp; 6:00 AM</div>
+              </div>
+              <input id="hardcore-toggle" type="checkbox" checked onchange="saveSettingsFromUI()"
+                class="w-5 h-5 accent-[#D46A43] rounded cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRAWER 2: 7-DAY CIRCADIAN TIMELINE & MACOS TELEMETRY SOURCES -->
+      <div id="telemetry-proof-drawer" class="hidden card-surface rounded-2xl p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderwarm pb-3">
+          <div>
+            <h3 class="font-bold text-base text-charcoal">7-Day Host macOS Interaction Window (Earliest → Latest)</h3>
+            <p class="text-xs text-inkmuted">
+              Live sources: <span id="telemetry-sources" class="font-mono text-charcoal">IOHIDSystem • zsh_history • git</span>
+            </p>
+          </div>
+          <span id="live-clock" class="text-xs font-mono text-inkmuted"></span>
+        </div>
+        <div id="daily-breakdown-grid" class="grid grid-cols-7 gap-2 text-center"></div>
+      </div>
+
+      <!-- GENERATED TOMORROW.MD RECEIPT (Shown whenever parked or shut down) -->
+      <div id="tomorrow-preview-section" class="hidden card-surface rounded-2xl p-6 space-y-4 border-t-[4px] border-t-sage">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderwarm pb-3">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-sagedark font-semibold">✓ Synced to Disk (./TOMORROW.md)</span>
+            <h3 class="font-bold text-lg text-charcoal">Your Live <code class="font-mono text-base">TOMORROW.md</code> Handoff File</h3>
+          </div>
+          <button onclick="openLockoutOverlay()" class="text-xs font-mono px-3.5 py-2 rounded-xl bg-terracotta text-white hover:bg-terracottadark transition">
+            Open Full-Screen Curfew Lockout
+          </button>
+        </div>
+        <pre id="tomorrow-md-inline" class="bg-surfacealt border border-borderwarm rounded-xl p-4 text-xs font-mono text-charcoal overflow-x-auto whitespace-pre-wrap leading-relaxed"></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- OVERLAY 1: ULTRA-CLEAN 5-MINUTE BIO-RESET (1 SINGLE ROTATING ACTIVITY)    -->
+  <!-- ========================================================================= -->
+  <div id="break-overlay" class="fixed inset-0 z-50 hidden bg-[#EDEAE2] text-charcoal overflow-y-auto">
+    <div class="max-w-2xl mx-auto px-6 py-10 min-h-screen flex flex-col justify-between">
+
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between border-b border-borderwarm pb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-sage"></span>
+          <span class="text-xs font-mono uppercase tracking-widest text-inkmuted">5-Minute Bio-Reset</span>
+        </div>
+        <button onclick="closeBreakOverlay()" class="text-xs font-mono text-inkmuted hover:text-charcoal underline">
+          End Early &amp; Return
+        </button>
+      </div>
+
+      <!-- Center Content: Timer + ONE Crisp Activity Card (Zero Text Clutter) -->
+      <div class="my-auto py-8 space-y-6">
+
+        <!-- 1-Line Saved Spot Pill -->
+        <div class="bg-surfacealt border border-borderwarm rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs sm:text-sm">
+          <span class="text-sagedark font-bold">✓ Spot Saved:</span>
+          <span id="break-overlay-breadcrumb" class="text-charcoal truncate font-medium"></span>
+        </div>
+
+        <!-- Giant Calm Countdown Timer -->
+        <div class="card-surface rounded-3xl p-8 sm:p-10 text-center space-y-2 border-t-[5px] border-t-terracotta">
+          <div class="text-xs font-mono uppercase tracking-widest text-inkmuted">Step Away From The Screen</div>
+          <div id="break-timer-display" class="metric-number text-8xl sm:text-9xl text-charcoal py-2">
+            05:00
+          </div>
+          <p class="text-xs font-mono text-sagedark">Continuous work streak reset to 0m</p>
+        </div>
+
+        <!-- THE SINGLE SUGGESTED ACTIVITY CARD (No Repeats, Minimal Text) -->
+        <div class="card-surface rounded-3xl p-7 sm:p-8 border-t-[5px] border-t-sage space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-sage/15 text-sagedark font-semibold">
+              Suggested Activity • <span id="single-proto-duration">1 min</span>
+            </span>
+            <button type="button" onclick="rotateBreakActivity()"
+              class="text-xs font-mono text-inkmuted hover:text-charcoal flex items-center gap-1 underline">
+              <span>↻ Try next activity</span>
+            </button>
+          </div>
+
+          <div class="flex items-start gap-4 pt-1">
+            <div id="single-proto-icon" class="text-4xl sm:text-5xl shrink-0">💧</div>
+            <div class="space-y-2">
+              <h3 id="single-proto-title" class="text-xl sm:text-2xl font-bold text-charcoal">
+                Hydration Reset
+              </h3>
+              <p id="single-proto-action" class="text-base sm:text-lg text-charcoal font-medium leading-snug">
+                Walk away from your desk and drink a full glass of water while standing.
+              </p>
+              <p id="single-proto-why" class="text-xs sm:text-sm text-inkmuted">
+                Even 1% dehydration drops prefrontal blood flow and spikes cortisol.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="border-t border-borderwarm pt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="sleepDisplayHardware()"
+          class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-charcoal text-[#F9F7F2] hover:bg-black text-sm font-medium transition flex items-center justify-center gap-2">
+          <span>🌙 Sleep Screen Now (<code class="font-mono text-xs">pmset displaysleepnow</code>)</span>
+        </button>
+        <button onclick="closeBreakOverlay()"
+          class="w-full sm:w-auto px-6 py-3.5 rounded-xl card-surface hover:bg-surfacealt text-sm font-semibold transition">
+          Done — Resume Work
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- OVERLAY 2: FULL-SCREEN HARD-CORE SHUTDOWN & CURFEW LOCKOUT OVERLAY        -->
+  <!-- ========================================================================= -->
+  <div id="shutdown-overlay" class="fixed inset-0 z-50 hidden bg-[#191918] text-[#F9F7F2] overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-6 py-10 min-h-screen flex flex-col justify-between">
+
+      <!-- Top Header -->
+      <div class="flex items-center justify-between border-b border-[#35332E] pb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-terracotta animate-pulse"></span>
+          <span class="text-xs font-mono uppercase tracking-widest text-[#A8A296]">
+            Hard-Core Circadian Curfew Lockout • Off-Duty Engine
+          </span>
+        </div>
+        <div class="flex items-center gap-4">
+          <button onclick="unpackMorning()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-sage text-white hover:bg-sagedark transition">
+            ☀ Morning Unpack &amp; Resume
+          </button>
+          <button onclick="closeShutdownOverlay()" class="text-xs font-mono text-[#A8A296] hover:text-white underline">
+            Dismiss Overlay
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Lockout Body -->
+      <div class="my-8 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+          <!-- Countdown Until 6:00 AM + Time Returned Receipt (5 cols) -->
+          <div class="lg:col-span-5 bg-[#242320] border border-[#35332E] border-t-[5px] border-t-terracotta rounded-2xl p-6 flex flex-col justify-between space-y-5">
+            <div>
+              <span class="inline-block text-xs font-mono uppercase tracking-wider px-2.5 py-0.5 rounded bg-terracotta/20 text-[#F28C68] font-semibold mb-3">
+                All Open Loops Parked
+              </span>
+              <h2 class="font-display text-3xl font-light text-white leading-tight">
+                Your code state is written to disk. Step away.
+              </h2>
+            </div>
+
+            <div class="bg-[#191918] border border-[#35332E] rounded-xl p-4">
+              <div class="text-[11px] font-mono uppercase tracking-wider text-[#A8A296]">Curfew Unlocks At 06:00 AM In</div>
+              <div id="curfew-countdown-display" class="metric-number text-5xl text-white mt-2">
+                09:13:20
+              </div>
+            </div>
+
+            <!-- Time & Attention Returned Receipt -->
+            <div class="space-y-2 pt-2 border-t border-[#35332E] text-xs font-mono">
+              <div class="text-[#A8A296] uppercase tracking-wider">Time &amp; Attention Returned To You</div>
+              <div class="flex justify-between py-1">
+                <span class="text-[#D5D0C5]">Circadian Recovery Protected:</span>
+                <strong id="receipt-hours-protected" class="text-[#7FB08E]">10.0 hrs</strong>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-[#D5D0C5]">Working Memory Offloaded:</span>
+                <strong id="receipt-memory-mins" class="text-[#7FB08E]">~23 mins saved</strong>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-[#D5D0C5]">Background Agents Paused:</span>
+                <strong id="receipt-agents-paused" class="text-[#F28C68]">0 PIDs (morning_resume.sh ready)</strong>
+              </div>
+            </div>
+
+            <button onclick="sleepDisplayHardware()"
+              class="w-full py-3.5 px-4 rounded-xl bg-terracotta hover:bg-terracottadark text-white font-medium text-sm transition flex items-center justify-center gap-2">
+              <span>🌙 Sleep Mac Display Now (<code class="font-mono text-xs">pmset displaysleepnow</code>)</span>
+            </button>
+          </div>
+
+          <!-- Real TOMORROW.md Content Receipt (7 cols) -->
+          <div class="lg:col-span-7 bg-[#242320] border border-[#35332E] border-t-[5px] border-t-sage rounded-2xl p-6 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-[#7FB08E]">
+                  ✓ Saved to ./TOMORROW.md &amp; ~/Desktop/TOMORROW.md
+                </span>
+                <span id="shutdown-timestamp-label" class="text-xs font-mono text-[#A8A296]"></span>
+              </div>
+              <pre id="shutdown-tomorrow-md" class="bg-[#191918] border border-[#35332E] rounded-xl p-4 text-xs font-mono text-[#E8E4DC] overflow-y-auto max-h-96 whitespace-pre-wrap leading-relaxed"></pre>
+            </div>
+            <div class="pt-4 mt-4 border-t border-[#35332E] flex items-center justify-between text-xs font-mono text-[#A8A296]">
+              <span>Tomorrow at 9:00 AM run: <code class="text-white">./morning_resume.sh</code></span>
+              <span>Zero prompts • Zero lost context</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Footnote -->
+      <div class="border-t border-[#35332E] pt-4 text-center text-xs font-mono text-[#A8A296]">
+        “The One Rule: It has to give people time back, not help them do even more.”
+      </div>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    let currentSettings = {
+      break_interval_minutes: 60,
+      active_break_types: ['water', 'posture', 'mobility', 'breathwork'],
+      curfew_start_hour: 20,
+      curfew_end_hour: 6,
+      max_daily_hours: 8.0,
+      hardcore_mode: true
+    };
+
+    let breakTimerInterval = null;
+    let breakSecondsRemaining = 300;
+    let curfewCountdownInterval = null;
+    let curfewSecondsRemaining = 0;
+    let toastTimeout = null;
+    let isFetchingTelemetry = false;
+
+    function toggleDrawer(drawerId) {
+      const el = document.getElementById(drawerId);
+      const arrow = document.getElementById(drawerId + '-arrow');
+      if (!el) return;
+      const isHidden = el.classList.contains('hidden');
+      if (isHidden) {
+        el.classList.remove('hidden');
+        if (arrow) arrow.textContent = '▴';
+      } else {
+        el.classList.add('hidden');
+        if (arrow) arrow.textContent = '▾';
+      }
+    }
+
+    function setGlobalLoading(active) {
+      const bar = document.getElementById('global-loading-bar');
+      if (!bar) return;
+      if (active) {
+        bar.classList.remove('opacity-0');
+      } else {
+        bar.classList.add('opacity-0');
+      }
+    }
+
+    function showToast(message, tone = 'sage') {
+      const toast = document.getElementById('status-toast');
+      const dot = document.getElementById('toast-dot');
+      const txt = document.getElementById('toast-text');
+      if (!toast || !txt) return;
+
+      txt.textContent = message;
+      dot.className = tone === 'terracotta'
+        ? 'w-2 h-2 rounded-full bg-terracotta'
+        : 'w-2 h-2 rounded-full bg-sage';
+
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2600);
+    }
+
+    let lastAutoNotifyTime = 0;
+
+    async function openInEditor(repoPath, latestFile) {
+      setGlobalLoading(true);
+      try {
+        const res = await fetch('/api/open-workspace', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo_path: repoPath, latest_file: latestFile })
+        });
+        const data = await res.json();
+        await parkWorkstream(repoPath, true);
+        showToast(`Opened in ${data.opened_with || 'Editor'} & marked active`);
+      } catch (err) {
+        console.error('Open workspace error:', err);
+      } finally {
+        setGlobalLoading(false);
+      }
+    }
+
+    async function sendBreakNotification(isManualTest = false) {
+      try {
+        if ('Notification' in window && Notification.permission === 'default') {
+          await Notification.requestPermission();
+        }
+        const res = await fetch('/api/notify', { method: 'POST' });
+        const data = await res.json();
+
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const n = new Notification(data.title || 'Off-Duty — 5-Min Bio-Reset Due', {
+            body: `${data.subtitle || ''}\nClick this banner to jump to Off-Duty and start your 5-min reset.`,
+            tag: 'offduty-break'
+          });
+          n.onclick = () => {
+            window.focus();
+            triggerScienceBreak(false);
+            n.close();
+          };
+        }
+        if (isManualTest) {
+          showToast('🔔 Sent macOS & Browser notification! Click the banner to start a break');
+        }
+      } catch (err) {
+        console.error('Notification error:', err);
+      }
+    }
+    function copyText(cmd) {
+      navigator.clipboard.writeText(cmd).then(() => {
+        showToast('Copied resume command to clipboard');
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const el = document.getElementById('live-clock');
+      if (el) {
+        el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' Local';
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function formatMMSS(totalSec) {
+      const m = Math.floor(totalSec / 60);
+      const s = Math.floor(totalSec % 60);
+      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    function formatHHMMSS(totalSec) {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = Math.floor(totalSec % 60);
+      return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+    }
+
+    function renderSettingsPills() {
+      const activeSet = new Set(currentSettings.active_break_types || []);
+      document.querySelectorAll('.protocol-pill').forEach(btn => {
+        const proto = btn.getAttribute('data-protocol');
+        const checkEl = btn.querySelector('.pill-check');
+        if (activeSet.has(proto)) {
+          btn.className = 'protocol-pill text-left p-3.5 rounded-xl border-2 border-sage bg-sage/5 active:scale-[0.99] transition flex items-start justify-between gap-2';
+          if (checkEl) {
+            checkEl.textContent = 'ON';
+            checkEl.className = 'pill-check text-xs font-mono px-2 py-0.5 rounded bg-sage text-white font-semibold';
+          }
+        } else {
+          btn.className = 'protocol-pill text-left p-3.5 rounded-xl border border-borderwarm bg-surfacealt opacity-70 active:scale-[0.99] transition flex items-start justify-between gap-2';
+          if (checkEl) {
+            checkEl.textContent = 'OFF';
+            checkEl.className = 'pill-check text-xs font-mono px-2 py-0.5 rounded bg-canvas text-inkmuted';
+          }
+        }
+      });
+
+      const intervalSelect = document.getElementById('break-interval-select');
+      if (intervalSelect) intervalSelect.value = String(currentSettings.break_interval_minutes || 60);
+
+      const curfewSelect = document.getElementById('curfew-select');
+      if (curfewSelect) {
+        const key = `${currentSettings.curfew_start_hour || 20}-${currentSettings.curfew_end_hour || 6}`;
+        if ([...curfewSelect.options].some(o => o.value === key)) {
+          curfewSelect.value = key;
+        }
+      }
+
+      const hcToggle = document.getElementById('hardcore-toggle');
+      if (hcToggle) hcToggle.checked = Boolean(currentSettings.hardcore_mode);
+    }
+
+    async function toggleProtocol(protoId) {
+      const list = Array.from(currentSettings.active_break_types || []);
+      const idx = list.indexOf(protoId);
+      if (idx >= 0) {
+        if (list.length > 1) {
+          list.splice(idx, 1);
+        } else {
+          showToast('At least 1 break protocol must stay active', 'terracotta');
+          return;
+        }
+      } else {
+        list.push(protoId);
+      }
+      currentSettings.active_break_types = list;
+      renderSettingsPills();
+      await persistSettings();
+    }
+
+    async function saveSettingsFromUI() {
+      const intervalSelect = document.getElementById('break-interval-select');
+      const curfewSelect = document.getElementById('curfew-select');
+      const hcToggle = document.getElementById('hardcore-toggle');
+
+      currentSettings.break_interval_minutes = parseInt(intervalSelect.value, 10) || 60;
+      const [startH, endH] = (curfewSelect.value || '20-6').split('-').map(n => parseInt(n, 10));
+      currentSettings.curfew_start_hour = startH;
+      currentSettings.curfew_end_hour = endH;
+      currentSettings.hardcore_mode = Boolean(hcToggle.checked);
+
+      renderSettingsPills();
+      await persistSettings();
+    }
+
+    async function persistSettings() {
+      const ind = document.getElementById('settings-saved-indicator');
+      const statusTxt = document.getElementById('settings-status-text');
+      if (ind && statusTxt) {
+        statusTxt.textContent = 'Saving...';
+        ind.classList.remove('opacity-0');
+      }
+      setGlobalLoading(true);
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentSettings)
+        });
+        const data = await res.json();
+        if (data.settings) {
+          currentSettings = data.settings;
+          renderSettingsPills();
+        }
+        if (statusTxt) statusTxt.textContent = '✓ Saved to ~/.offduty_state.json';
+        showToast('Bio-boundary preferences saved');
+        setTimeout(() => ind && ind.classList.add('opacity-0'), 1800);
+        fetchTelemetry(false);
+      } catch (err) {
+        console.error('Failed saving settings:', err);
+        showToast('Failed saving settings', 'terracotta');
+      } finally {
+        setGlobalLoading(false);
+      }
+    }
+
+    async function parkWorkstream(repoPath, unpark = false) {
+      setGlobalLoading(true);
+      try {
+        const res = await fetch('/api/park-context', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo_path: repoPath, unpark: Boolean(unpark) })
+        });
+        const data = await res.json();
+        if (data.tomorrow_md_content) {
+          document.getElementById('tomorrow-md-inline').textContent = data.tomorrow_md_content;
+          document.getElementById('tomorrow-preview-section').classList.remove('hidden');
+        }
+        showToast(
+          unpark
+            ? 'Workstream unpacked & marked active'
+            : '✓ Parked to TOMORROW.md (+23m working memory saved)'
+        );
+        await fetchTelemetry(false);
+      } catch (err) {
+        console.error('Park error:', err);
+        showToast('Could not park workstream', 'terracotta');
+      } finally {
+        setGlobalLoading(false);
+      }
+    }
+
+    async function unpackMorning() {
+      setGlobalLoading(true);
+      try {
+        const res = await fetch('/api/resume-morning', { method: 'POST' });
+        const data = await res.json();
+        closeShutdownOverlay();
+        if (data.resume_command) {
+          navigator.clipboard.writeText(data.resume_command).catch(() => {});
+        }
+        showToast('☀ Morning Unpack complete! Resume command copied to clipboard');
+        await fetchTelemetry(true);
+      } catch (err) {
+        console.error('Morning unpack failed:', err);
+      } finally {
+        setGlobalLoading(false);
+      }
+    }
+
+    function renderWorkstreamsBoard(repos) {
+      const board = document.getElementById('workstreams-board');
+      if (!repos || repos.length === 0) {
+        board.innerHTML = `
+          <div class="bg-surfacealt border border-borderwarm rounded-2xl p-6 text-center text-sm text-inkmuted">
+            No uncommitted code loops detected right now. Your working memory is clear.
+          </div>
+        `;
+        return;
+      }
+
+      board.innerHTML = repos.map(r => {
+        const isParked = Boolean(r.is_parked);
+        const modFiles = r.modified_files || [];
+        const fileBadges = modFiles.length > 0
+          ? modFiles.slice(0, 6).map(f =>
+              `<span class="font-mono text-xs px-2 py-0.5 rounded-md bg-surface border border-borderwarm text-charcoal">${escapeHtml(f)}</span>`
+            ).join('')
+          : `<span class="font-mono text-xs px-2 py-0.5 rounded-md bg-surface border border-borderwarm text-inkmuted">Clean working tree</span>`;
+
+        const diffBox = r.diff_preview
+          ? `<pre class="mt-3 bg-[#191918] text-[#E8E4DC] rounded-xl p-3.5 text-[11px] font-mono overflow-x-auto leading-relaxed">${escapeHtml(r.diff_preview)}</pre>`
+          : '';
+
+        return `
+          <div class="rounded-2xl p-5 sm:p-6 border transition ${
+            isParked
+              ? 'bg-sage/10 border-sage/40'
+              : 'bg-surfacealt border-borderwarm'
+          }">
+            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+              <div class="space-y-2.5 flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase font-semibold ${
+                    isParked
+                      ? 'bg-sage text-white'
+                      : 'bg-terracotta/15 text-terracottadark'
+                  }">
+                    ${isParked ? `✓ Parked at ${escapeHtml(r.parked_at || '')}` : `${r.uncommitted_count} Open Loop(s)`}
+                  </span>
+                  <h3 class="font-bold text-lg text-charcoal">${escapeHtml(r.name)}</h3>
+                  <span class="font-mono text-xs px-2 py-0.5 rounded bg-surface border border-borderwarm text-inkmuted">
+                    branch: ${escapeHtml(r.branch)}
+                  </span>
+                  <span class="text-xs font-mono text-inkmuted">
+                    • touched ${r.minutes_ago === 0 ? 'just now' : r.minutes_ago + 'm ago'}
+                  </span>
+                </div>
+
+                <div class="text-xs text-inkmuted">
+                  Last commit: <span class="font-mono text-charcoal">${escapeHtml(r.last_commit)}</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span class="text-xs font-mono text-inkmuted mr-1">Uncommitted files:</span>
+                  ${fileBadges}
+                </div>
+
+                ${diffBox}
+
+                <div class="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono">
+                  <span class="text-sagedark font-semibold">9:00 AM Resume Cmd:</span>
+                  <code class="bg-surface border border-borderwarm px-2 py-1 rounded text-charcoal truncate max-w-md">${escapeHtml(r.resume_command || '')}</code>
+                  <button type="button" onclick="copyText(${JSON.stringify(r.resume_command || '')})"
+                    class="px-2 py-1 rounded bg-surface hover:bg-canvas border border-borderwarm text-inkmuted hover:text-charcoal transition">
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div class="shrink-0 flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-between gap-2.5">
+                ${
+                  isParked
+                    ? `<div class="flex flex-col items-end gap-2">
+                        <button type="button" onclick='openInEditor(${JSON.stringify(r.path)}, ${JSON.stringify(r.latest_file || "")})'
+                          class="px-4 py-2.5 rounded-xl bg-sage hover:bg-sagedark text-white text-xs font-mono font-semibold transition shadow-sm">
+                          🚀 Resume in Editor (${escapeHtml(r.latest_file || 'repo')})
+                        </button>
+                        <button type="button" onclick='parkWorkstream(${JSON.stringify(r.path)}, true)'
+                          class="text-[11px] font-mono text-inkmuted hover:text-charcoal underline">
+                          ✓ Saved to TOMORROW.md (Unpark)
+                        </button>
+                      </div>`
+                    : `<button type="button" onclick='parkWorkstream(${JSON.stringify(r.path)}, false)'
+                        class="px-4 py-3 rounded-xl bg-charcoal hover:bg-black text-[#F9F7F2] text-xs font-mono font-semibold transition shadow-sm flex items-center justify-center gap-2">
+                        <span>📌 Save My Spot (Close Tab Safely)</span>
+                      </button>`
+                }
+                <span class="text-[11px] font-mono text-inkmuted text-right">
+                  ${isParked ? 'Spot saved • Ready for tomorrow' : 'Snapshots git diff + 9 AM resume cmd'}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function fetchTelemetry(manualRefresh = false) {
+      if (isFetchingTelemetry && !manualRefresh) return;
+      isFetchingTelemetry = true;
+
+      const refreshBtn = document.getElementById('refresh-telemetry-btn');
+      const refreshSpinner = document.getElementById('refresh-spinner');
+      const latBadge = document.getElementById('scan-latency-badge');
+
+      if (manualRefresh) {
+        setGlobalLoading(true);
+        if (refreshBtn) refreshBtn.disabled = true;
+        if (refreshSpinner) refreshSpinner.classList.add('animate-spin');
+        if (latBadge) latBadge.textContent = 'scanning...';
+      }
+
+      try {
+        const url = manualRefresh ? '/api/telemetry?force=1' : '/api/telemetry';
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (latBadge && data.scan_duration_ms !== undefined) {
+          latBadge.textContent = `${data.scan_duration_ms}ms`;
+        }
+
+        if (data.settings) {
+          currentSettings = data.settings;
+          renderSettingsPills();
+        }
+
+        const jm = data.juggling_metrics || {};
+        const repos = jm.active_repos || [];
+        const repoCount = jm.active_repos_count ?? 0;
+        const uncommittedCount = jm.uncommitted_file_count ?? 0;
+        const parkedCount = data.parked_count ?? 0;
+        const contMins = data.continuous_work_minutes || 0;
+        const idleSecs = data.idle_seconds || 0;
+
+        // Card 1: Bio-Reset (Next Activity Preview + Streak)
+        document.getElementById('card-metric-streak-badge').textContent = `${Math.round(contMins)}m streak`;
+        document.getElementById('idle-seconds').textContent = idleSecs.toFixed(1) + 's';
+        document.getElementById('breaks-count-banner').textContent = data.breaks_taken_today || 0;
+        if (data.next_protocol) {
+          document.getElementById('next-activity-preview').textContent =
+            `${data.next_protocol.icon} ${data.next_protocol.short_label}`;
+        }
+
+        // Card 2: Open Code Loops & Parallel Streams
+        document.getElementById('card-metric-loops').textContent = String(uncommittedCount);
+        document.getElementById('card-metric-juggling').textContent = String(repoCount);
+        document.getElementById('claude-turns-count').textContent = jm.claude_turns_today ?? 0;
+        document.getElementById('running-agents-count').textContent = jm.running_agent_count ?? 0;
+        document.getElementById('parked-loops-status').textContent = `${parkedCount} of ${repoCount} parked`;
+
+        // Card 3: Circadian Boundaries
+        const ca = data.circadian_audit || {};
+        document.getElementById('post-8pm-count').textContent = ca.post_8pm_nights_count ?? 0;
+        document.getElementById('pre-6am-count').textContent = ca.pre_6am_starts_count ?? 0;
+        document.getElementById('weekend-days-count').textContent = ca.weekend_active_days_count ?? 0;
+        document.getElementById('today-window-label').textContent =
+          `${ca.earliest_interaction_today || '—'} → ${ca.latest_interaction_today || '—'}`;
+        document.getElementById('telemetry-sources').textContent = (ca.telemetry_sources || []).join(' • ');
+
+        // Card 4: Gives Time Back
+        const cs = data.curfew_status || {};
+        const hrsProtected = cs.hours_protected_until_morning ?? 10.0;
+        document.getElementById('card-metric-reclaimed').textContent = `${hrsProtected}h`;
+        document.getElementById('reclaimed-mins-banner').textContent = `${(data.reclaimed_minutes_today || 0).toFixed(0)}m`;
+        document.getElementById('memory-saved-est').textContent = `${Math.max(1, repoCount) * 23}m`;
+
+        // Verdict Pill
+        const verdictText = document.getElementById('verdict-text');
+        const verdictDot = document.getElementById('verdict-dot');
+        verdictText.textContent = ca.burnout_risk_verdict || 'Boundaries Intact';
+        if (ca.verdict_level === 'high') {
+          verdictDot.className = 'w-2 h-2 rounded-full bg-terracotta';
+        } else if (ca.verdict_level === 'moderate') {
+          verdictDot.className = 'w-2 h-2 rounded-full bg-amberwarm';
+        } else {
+          verdictDot.className = 'w-2 h-2 rounded-full bg-sage';
+        }
+
+        // Render Centerpiece Workstreams Board
+        renderWorkstreamsBoard(repos);
+
+        // Proof Drawer: 7-day strip
+        const stripEl = document.getElementById('daily-breakdown-grid');
+        const days = ca.daily_breakdown || [];
+        stripEl.innerHTML = days.map(d => {
+          const hasBleed = d.post_8pm || d.pre_6am || (d.is_weekend && d.active);
+          const bgClass = !d.active
+            ? 'bg-surfacealt text-inkmuted opacity-60'
+            : hasBleed
+              ? 'bg-terracotta/10 border-terracotta/40 text-charcoal'
+              : 'bg-sage/10 border-sage/30 text-charcoal';
+          return `
+            <div class="border border-borderwarm rounded-xl p-2 ${bgClass} flex flex-col justify-between min-h-[76px]">
+              <div class="text-[10px] font-mono uppercase font-semibold">${escapeHtml(d.short_day)}${d.is_weekend ? '*' : ''}</div>
+              <div class="my-1 font-mono text-[11px] leading-tight">
+                <div>${escapeHtml(d.earliest)}</div>
+                <div class="text-inkmuted text-[9px]">to</div>
+                <div>${escapeHtml(d.latest)}</div>
+              </div>
+              <div class="text-[9px] font-mono ${hasBleed ? 'text-terracottadark font-semibold' : 'text-sagedark'}">
+                ${!d.active ? 'Rest' : d.post_8pm ? '>8PM' : d.pre_6am ? '<6AM' : d.is_weekend ? 'Wknd' : 'OK'}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Update browser tab title so user sees streak even from other tabs
+        document.title = data.break_due
+          ? `🔴 (Reset Due • ${Math.round(contMins)}m) Off-Duty`
+          : `(${Math.round(contMins)}m) Off-Duty — Bio-Boundary Engine`;
+
+        // Automatic 60-minute break notification (fires at most once every 15 mins when break_due is true)
+        const nowMs = Date.now();
+        if (data.break_due && (nowMs - lastAutoNotifyTime > 15 * 60 * 1000)) {
+          lastAutoNotifyTime = nowMs;
+          sendBreakNotification(false);
+        }
+
+        if (manualRefresh) {
+          showToast(`Host telemetry refreshed (${data.scan_duration_ms || 0}ms)`);
+        }
+      } catch (err) {
+        console.error('Telemetry error:', err);
+        if (manualRefresh) showToast('Telemetry refresh failed', 'terracotta');
+      } finally {
+        isFetchingTelemetry = false;
+        setGlobalLoading(false);
+        if (refreshBtn) refreshBtn.disabled = false;
+        if (refreshSpinner) refreshSpinner.classList.remove('animate-spin');
+      }
+    }
+
+    function renderSingleProtocolCard(proto) {
+      if (!proto) return;
+      document.getElementById('single-proto-icon').textContent = proto.icon || '🌿';
+      document.getElementById('single-proto-title').textContent = proto.title || 'Bio-Reset';
+      document.getElementById('single-proto-duration').textContent = proto.duration_label || '1 min';
+      document.getElementById('single-proto-action').textContent = proto.action || '';
+      document.getElementById('single-proto-why').textContent = proto.why || '';
+    }
+
+    async function triggerScienceBreak(sleepScreen) {
+      const btn = document.getElementById('trigger-break-btn');
+      const spinner = document.getElementById('break-btn-spinner');
+      const label = document.getElementById('break-btn-label');
+
+      if (btn) btn.disabled = true;
+      if (spinner) spinner.classList.remove('hidden');
+      if (label) label.textContent = 'Starting Bio-Reset...';
+      setGlobalLoading(true);
+
+      try {
+        const res = await fetch('/api/trigger-break', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sleep_display: Boolean(sleepScreen), rotate_only: false })
+        });
+        const data = await res.json();
+
+        document.getElementById('break-overlay-breadcrumb').textContent =
+          (data.saved_breadcrumb && data.saved_breadcrumb.summary) || 'Current workspace state saved.';
+
+        renderSingleProtocolCard(data.protocol);
+
+        document.getElementById('break-overlay').classList.remove('hidden');
+        startBreakCountdown(data.duration_seconds || 300);
+        showToast(`5-Min Reset: ${data.protocol ? data.protocol.title : 'Started'}`);
+        fetchTelemetry(false);
+      } catch (err) {
+        console.error('Failed triggering break:', err);
+        showToast('Could not start break reset', 'terracotta');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.classList.add('hidden');
+        if (label) label.textContent = 'Park Spot & Take 5-Min Bio-Reset';
+        setGlobalLoading(false);
+      }
+    }
+
+    async function rotateBreakActivity() {
+      setGlobalLoading(true);
+      try {
+        const res = await fetch('/api/trigger-break', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rotate_only: true })
+        });
+        const data = await res.json();
+        renderSingleProtocolCard(data.protocol);
+        showToast(`Switched to: ${data.protocol ? data.protocol.title : 'Next activity'}`);
+        fetchTelemetry(false);
+      } catch (err) {
+        console.error('Failed rotating activity:', err);
+      } finally {
+        setGlobalLoading(false);
+      }
+    }
+
+    function startBreakCountdown(seconds) {
+      if (breakTimerInterval) clearInterval(breakTimerInterval);
+      breakSecondsRemaining = seconds;
+      const disp = document.getElementById('break-timer-display');
+      disp.textContent = formatMMSS(breakSecondsRemaining);
+
+      breakTimerInterval = setInterval(() => {
+        breakSecondsRemaining = Math.max(0, breakSecondsRemaining - 1);
+        disp.textContent = formatMMSS(breakSecondsRemaining);
+        if (breakSecondsRemaining <= 0) {
+          clearInterval(breakTimerInterval);
+        }
+      }, 1000);
+    }
+
+    function closeBreakOverlay() {
+      if (breakTimerInterval) clearInterval(breakTimerInterval);
+      document.getElementById('break-overlay').classList.add('hidden');
+      fetchTelemetry(false);
+    }
+
+    async function executeShutdown(sleepScreen) {
+      const btn = document.getElementById('shutdown-btn');
+      const spinner = document.getElementById('shutdown-btn-spinner');
+      const label = document.getElementById('shutdown-btn-label');
+
+      if (btn) btn.disabled = true;
+      if (spinner) spinner.classList.remove('hidden');
+      if (label) label.textContent = 'Parking All Loops & Writing TOMORROW.md...';
+      setGlobalLoading(true);
+
+      try {
+        const res = await fetch('/api/shutdown', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pause_agents: true, sleep_display: Boolean(sleepScreen) })
+        });
+        const data = await res.json();
+
+        const mdContent = data.tomorrow_md_content || '';
+        document.getElementById('shutdown-tomorrow-md').textContent = mdContent;
+        document.getElementById('tomorrow-md-inline').textContent = mdContent;
+        document.getElementById('tomorrow-preview-section').classList.remove('hidden');
+        document.getElementById('shutdown-timestamp-label').textContent = data.shutdown_at || '';
+
+        const tr = data.time_returned || {};
+        document.getElementById('receipt-hours-protected').textContent =
+          (tr.hours_protected_until_morning ?? 9.0) + ' hrs until 6:00 AM';
+        document.getElementById('receipt-memory-mins').textContent =
+          '~' + (tr.cognitive_offload_minutes ?? 23) + ' mins saved';
+
+        const pausedCount = (data.paused_agents || []).length;
+        document.getElementById('receipt-agents-paused').textContent =
+          pausedCount > 0
+            ? `${pausedCount} Claude PID(s) paused via SIGSTOP`
+            : '0 active PIDs (morning_resume.sh written)';
+
+        openLockoutOverlay(tr.seconds_until_unlock || 32400);
+        showToast('All open loops parked to TOMORROW.md & Curfew Lockout engaged', 'terracotta');
+        fetchTelemetry(false);
+      } catch (err) {
+        console.error('Failed executing shutdown:', err);
+        showToast('Shutdown command failed', 'terracotta');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.classList.add('hidden');
+        if (label) label.textContent = 'End Workday: Park All, Pause Claude & Lock';
+        setGlobalLoading(false);
+      }
+    }
+
+    function openLockoutOverlay(secondsUntilUnlock) {
+      document.getElementById('shutdown-overlay').classList.remove('hidden');
+      if (secondsUntilUnlock) {
+        curfewSecondsRemaining = secondsUntilUnlock;
+      }
+      if (curfewCountdownInterval) clearInterval(curfewCountdownInterval);
+      const disp = document.getElementById('curfew-countdown-display');
+      disp.textContent = formatHHMMSS(curfewSecondsRemaining);
+
+      curfewCountdownInterval = setInterval(() => {
+        curfewSecondsRemaining = Math.max(0, curfewSecondsRemaining - 1);
+        disp.textContent = formatHHMMSS(curfewSecondsRemaining);
+      }, 1000);
+    }
+
+    function closeShutdownOverlay() {
+      document.getElementById('shutdown-overlay').classList.add('hidden');
+    }
+
+    async function sleepDisplayHardware() {
+      showToast('Triggering macOS pmset displaysleepnow...');
+      try {
+        await fetch('/api/sleep-display', { method: 'POST' });
+      } catch (err) {
+        console.error('Display sleep failed:', err);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Initial load + live 10s telemetry refresh
+    fetchTelemetry(false);
+    setInterval(() => fetchTelemetry(false), 10000);
+  </script>
+</body>
+</html>
